@@ -32,7 +32,6 @@ function increaseThisYearCounter(array &$result, string $year): void {
     }
 }
 
-
 function dictToString(array $dict): string {
 
     $result = [];
