@@ -3,6 +3,7 @@
 function getDaysUnderTempDictionary(float $targetTemp): array {
     $inputFile = fopen('data/temperatures-filtered.csv', "r");
     $result = [];
+    $counter = 0;
 
     while (! feof($inputFile)) {
         $dict = fgetcsv($inputFile);
@@ -28,8 +29,9 @@ function getDaysUnderTempDictionary(float $targetTemp): array {
 
 function increaseThisYearCounter(array &$result, string $year): void {
     if (!isset($result[$year])) {
-        $result[$year]++;
+        $result[$year] = 0;
     }
+    $result[$year]++;
 }
 
 
@@ -46,4 +48,4 @@ function dictToString(array $dict): string {
 }
 
 
-print dictToString(getDaysUnderTempDictionary(5.1));
+print dictToString(getDaysUnderTempDictionary(-13));
