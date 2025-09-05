@@ -20,7 +20,7 @@ while(! feof($inputFile)) {
         $hour = $dict[3];
         $temperature = $dict[9];
 
-        $hour = str_pad(':00', '');
+        $hour = str_replace(':00', '', $hour);
 
         fputcsv($outputFile, [$year, $month, $day, $hour, $temperature]);
     }
