@@ -46,6 +46,3 @@ function dictToString(array $dict): string {
 
     return "[$result]";
 }
-
-
-print dictToString(getDaysUnderTempDictionary(-13));

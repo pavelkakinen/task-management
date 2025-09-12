@@ -10,29 +10,41 @@ $command = $opts['command'] ?? $opts['c'] ?? null;
 $year = $opts['year'] ?? $opts['y'] ?? null;
 $temp = $opts['temp'] ?? $opts['t'] ?? null;
 
+var_dump($year);
+
 
 if ($command === 'days-under-temp') {
     // validate that required parameters are provided
     // if not show error and exit
     // calculate result using getDaysUnderTemp()
     // print result
-    if ($year && $temp) {
-        echo getDaysUnderTemp((int)$year, (float)$temp);
+    if ($year > 0 && $temp) {
+        $result = getDaysUnderTemp((int)$year, (float)$temp);
+        echo $result . PHP_EOL;
     } else {
         showError('Not required parameters: year or temp');
     }
 
 } else if ($command === 'days-under-temp-dict') {
-    // validate that required parameters are provided
-    // if not show error and exit
-    // calculate result using getDaysUnderTempDictionary()
-    // print result
+    //     validate that required parameters are provided
+    //     if not show error and exit
+    //     calculate result using getDaysUnderTempDictionary()
+    //     print result
     if ($temp) {
-        echo getDaysUnderTempDictionary((float)$temp);
+        $result = getDaysUnderTempDictionary((float)$temp);
+        echo dictToString($result) . PHP_EOL;
     } else {
         showError('Not required parameters: temp');
     }
-} else {
+} else if ($command === 'avg-winter-temp') {
+    if ($year) {
+        $startYear = intval(explode('/', $year)[0]);
+        $endYear = intval(explode('/', $year)[1]);
+        var_dump($startYear, $endYear);
+        $result = getAverageWinterTemp($startYear, $endYear);
+    }
+}
+else {
     showError('command is missing or is unknown');
 }
 
