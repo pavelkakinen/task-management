@@ -18,6 +18,7 @@ if ($command === 'days-under-temp') {
     // if not show error and exit
     // calculate result using getDaysUnderTemp()
     // print result
+
     if ($year > 0 && $temp) {
         $result = getDaysUnderTemp((int)$year, (float)$temp);
         echo $result . PHP_EOL;
