@@ -6,7 +6,6 @@ $outputFile = fopen("temperatures-filtered.csv", "w");
 while(! feof($inputFile)) {
     $dict = fgetcsv($inputFile);
 
-    var_dump($dict[0], $dict[1], $dict[2], $dict[3], $dict[9]);
 
     // kood tuleb siia
     if (empty($dict)) {

@@ -43,4 +43,3 @@ function getAverageWinterTemp(int $winterStartYear, int $winterEndYear): float {
     return round($totalTemp / $count, 2);
 }
 
-print getAverageWinterTemp(2021, 2022);

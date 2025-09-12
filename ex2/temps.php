@@ -24,7 +24,6 @@ if ($command === 'days-under-temp') {
     } else {
         showError('Not required parameters: year or temp');
     }
-
 } else if ($command === 'days-under-temp-dict') {
     //     validate that required parameters are provided
     //     if not show error and exit
@@ -43,8 +42,7 @@ if ($command === 'days-under-temp') {
         $result = getAverageWinterTemp($startYear, $endYear);
 
     }
-}
-else {
+} else {
     showError('command is missing or is unknown');
 }
 

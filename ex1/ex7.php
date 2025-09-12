@@ -22,6 +22,3 @@ function getDaysUnderTemp(int $targetYear, float $targetTemp): float {
 
     return round($counter / 24, 2);
 }
-
-$result = getDaysUnderTemp(2021, -5);
-echo $result;
