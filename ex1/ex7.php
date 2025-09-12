@@ -18,6 +18,7 @@ function getDaysUnderTemp(int $targetYear, float $targetTemp): float {
             $counter++;
         }
     }
+    fclose($file);
 
     return round($counter / 24, 2);
 }
