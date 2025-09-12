@@ -10,8 +10,6 @@ $command = $opts['command'] ?? $opts['c'] ?? null;
 $year = $opts['year'] ?? $opts['y'] ?? null;
 $temp = $opts['temp'] ?? $opts['t'] ?? null;
 
-
-
 if ($command === 'days-under-temp') {
     // validate that required parameters are provided
     // if not show error and exit
@@ -40,7 +38,7 @@ if ($command === 'days-under-temp') {
         $startYear = intval(explode('/', $year)[0]);
         $endYear = intval(explode('/', $year)[1]);
         $result = getAverageWinterTemp($startYear, $endYear);
-
+        echo $result . PHP_EOL;
     }
 } else {
     showError('command is missing or is unknown');
