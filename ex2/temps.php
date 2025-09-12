@@ -1,7 +1,7 @@
 <?php
 
 require_once '../ex1/ex7.php'; // use existing code
-require_once '../ex1/ex8.php';
+//require_once '../ex1/ex8.php';
 require_once 'functions.php'; // separate functions from main program
 
 $opts = getopt('c:y:t:', ['command:', 'year:', 'temp:']);
@@ -10,7 +10,6 @@ $command = $opts['command'] ?? $opts['c'] ?? null;
 $year = $opts['year'] ?? $opts['y'] ?? null;
 $temp = $opts['temp'] ?? $opts['t'] ?? null;
 
-var_dump($year);
 
 
 if ($command === 'days-under-temp') {
@@ -21,7 +20,7 @@ if ($command === 'days-under-temp') {
 
     if ($year > 0 && $temp) {
         $result = getDaysUnderTemp((int)$year, (float)$temp);
-        echo $result . PHP_EOL;
+        print $result;
     } else {
         showError('Not required parameters: year or temp');
     }

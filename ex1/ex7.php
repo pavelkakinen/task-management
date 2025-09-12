@@ -17,10 +17,10 @@ function getDaysUnderTemp(int $targetYear, float $targetTemp): float {
         if ($targetYear === intval($dict[0]) && floatval($dict[4]) <= $targetTemp) {
             $counter++;
         }
-
     }
 
     return round($counter / 24, 2);
 }
 
-print getDaysUnderTemp(2021, -5);
+$result = getDaysUnderTemp(2021, -5);
+echo $result;
