@@ -4,7 +4,7 @@ function getDaysUnderTemp(int $targetYear, float $targetTemp): float {
 
     // kood tuleb siia
 
-    $file = fopen("data/temperatures-filtered.csv", "r");
+    $file = fopen(__DIR__ . "/data/temperatures-filtered.csv", "r");
     $counter = 0;
 
     while(! feof($file)) {
