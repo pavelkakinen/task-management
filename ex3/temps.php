@@ -32,8 +32,6 @@ if ($command === 'show-form') {
 
 } else if ($command === 'avg-winter-temp') {
 
-    include 'pages/avg-winter-temp.php';
-
     $years = $_POST['year'] ?? '2021/2022';
 
     $startYear = intval(explode('/', $years)[0]);
@@ -41,11 +39,10 @@ if ($command === 'show-form') {
 
     $avgWinterTemp = @getAverageWinterTemp($startYear, $endYear);
 
-    var_dump($avgWinterTemp);
-
-    $message = (string)$avgWinterTemp;
+    $message = $avgWinterTemp;
 
     include 'pages/result.php';
+    exit();
 
 } else {
     throw new Error('unknown command: ' . $command);
