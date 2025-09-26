@@ -1,0 +1,24 @@
+
+.grid-container {
+    width: 80%;
+
+    display: grid;
+    grid-template-columns: auto auto auto;
+    grid-row-gap: 1rem;
+    grid-column-gap: .5rem;
+}
+.grid-container > div {
+    border: 1px solid olive;
+    border-radius: .2rem;
+    padding: .2rem;
+}
+
+#item1 {
+    grid-row-start: 1;
+    grid-row-end: 3;
+}
+
+#item6 {
+    grid-column-start: 1;
+    grid-column-end: 4;
+}
