@@ -1,0 +1,120 @@
+<?php
+// В НАЧАЛЕ файла, ДО любого HTML
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $firstName = trim($_POST['firstName'] ?? '');
+    $lastName = trim($_POST['lastName'] ?? '');
+
+    if (!empty($firstName) && !empty($lastName)) {
+        // Сохраняем данные
+        $data = urlencode($firstName) . '|' . urlencode($lastName) . PHP_EOL;
+        file_put_contents('employees.txt', $data, FILE_APPEND | LOCK_EX);
+
+        // ПЕРЕНАПРАВЛЕНИЕ ДО любого вывода
+        header('Location: employee-list.php');
+        exit; // ОБЯЗАТЕЛЬНО!
+    }
+}
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body id="employee-form-page">
+
+<table border="0" width="100%">
+    <td></td>
+    <td width="690px">
+        <table border="0" width="100%">
+            <tr>
+                <td><a href="index.html" id="dashboard-link">Dashboard</a> | <a href="employee-list.php" id="employee-list-link">Employees</a> | <a href="employee-form.html" id="employee-form-link">Add Employee</a> | <a href="task-list.php" id="task-list-link">Tasks</a> | <a href="task-form.php" id="task-form-link">Add Task</a></td>
+            </tr>
+
+            <tr>
+                <td>
+                    <table border="0" width="100%">
+                        <tr>
+                            <td width="34%">
+                                <form method="post" action="employee-form.php">
+                                    <table border="1" width="100%">
+                                        <tr>
+                                            <td>Add Employee</td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <table border="0" width="100%">
+                                                    <td></td>
+                                                    <td width="450px">
+                                                        <table border="0" width="100%">
+                                                            <tr>
+                                                                <td colspan="2">
+                                                                    <br>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td width="30%" align="right">First name:</td>
+                                                                <td>
+                                                                    <input name="firstName" type="text" style="width: 100%; box-sizing: border-box;">
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td align="right">Last name:</td>
+                                                                <td>
+                                                                    <input name="lastName" type="text" style="width: 100%; box-sizing: border-box">
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td align="right">Position:</td>
+                                                                <td>
+                                                                    <select type="text" style="width: 100%; box-sizing: border-box">
+                                                                        <option></option>
+                                                                        <option value="o1">Manager</option>
+                                                                        <option value="o2">Designer</option>
+                                                                        <option value="o2">Developer</option>
+                                                                    </select>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td align="right">Picture:</td>
+                                                                <td>
+                                                                    <input type="file" id="fileInput" style="display: none">
+                                                                    <button onclick="document.getElementById('fileInput').click()">Choose File</button>
+                                                                    <span id="fileName">No file chosen</span>
+                                                                </td>
+                                                            </tr>
+                                                            <tr><td><br></td></tr>
+                                                            <tr>
+                                                                <td colspan="2" align="right">
+                                                                    <button name="submitButton" type="submit">Salvesta</button>
+                                                                </td>
+                                                            </tr>
+                                                        </table>
+                                                    </td>
+                                                    <td></td>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </form>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="3" height="100px"></td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <hr>icd0007 Sample Application</td>
+
+            </tr>
+        </table>
+    </td>
+    <td></td>
+</table>
+
+</body>
+</html>
