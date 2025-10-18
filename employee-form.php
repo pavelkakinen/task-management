@@ -1,17 +1,14 @@
 <?php
-// В НАЧАЛЕ файла, ДО любого HTML
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $firstName = trim($_POST['firstName'] ?? '');
     $lastName = trim($_POST['lastName'] ?? '');
 
     if (!empty($firstName) && !empty($lastName)) {
-        // Сохраняем данные
         $data = urlencode($firstName) . '|' . urlencode($lastName) . PHP_EOL;
         file_put_contents('employees.txt', $data, FILE_APPEND | LOCK_EX);
 
-        // ПЕРЕНАПРАВЛЕНИЕ ДО любого вывода
         header('Location: employee-list.php');
-        exit; // ОБЯЗАТЕЛЬНО!
+        exit;
     }
 }
 ?>

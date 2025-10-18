@@ -1,15 +1,12 @@
 <?php
-// Обработка формы ДО любого HTML
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $description = trim($_POST['description'] ?? '');
     $estimate = (int)($_POST['estimate'] ?? 0);
 
     if (!empty($description) && $estimate >= 1 && $estimate <= 5) {
-        // Сохраняем данные
         $data = urlencode($description) . '|' . $estimate . PHP_EOL;
         file_put_contents('tasks.txt', $data, FILE_APPEND | LOCK_EX);
 
-        // Перенаправляем на список задач
         header('Location: task-list.php');
         exit;
     }

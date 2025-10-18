@@ -1,5 +1,4 @@
 <?php
-// Функция для получения задач
 function getTasks() {
     if (!file_exists('tasks.txt')) return [];
 
@@ -28,8 +27,6 @@ $tasks = getTasks();
     <title>Tasks</title>
 </head>
 <body id="task-list-page">
-
-<!-- Такая же структура меню как в других файлах -->
 
 <table border="1" width="100%">
     <tr>
