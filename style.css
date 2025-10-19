@@ -1,0 +1,78 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f9f6ef;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center; /* центр по горизонтали */
+}
+
+/* Контейнер всей страницы */
+#root {
+    width: 90%;           /* чтобы не было узко */
+    max-width: 1200px;    /* ограничим чтобы не растягивалось слишком */
+    min-height: 100vh;    /* вся высота окна */
+    padding-bottom: 20px;
+}
+
+/* Внутренние элементы */
+nav {
+    padding: 15px 25px;
+    font-size: 18px;
+    border-bottom: 1px solid #cfdde7;
+    text-align: center;
+}
+
+nav a {
+    color: #2c4a77;
+    text-decoration: none;
+    margin: 0 8px;
+    font-weight: 500;
+}
+
+nav a:hover {
+    text-decoration: underline;
+}
+
+#dash-layout {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    margin: 40px;
+}
+
+/* Карточки (сотрудники и задачи) */
+.content-card {
+    flex: 1;
+    border: 1px solid #b6cce0;
+    border-radius: 4px;
+}
+
+.content-card-header {
+    background-color: #9ec3e0;
+    color: #1a3a60;
+    font-weight: bold;
+    padding: 10px;
+    font-size: 18px;
+    border-bottom: 1px solid #b6cce0;
+}
+
+.content-card-content {
+    padding: 10px;
+}
+
+.employee-item {
+    flex: 1;
+    border: 1px solid #b6cce0;
+    border-radius: 4px;
+}
+
+/* Футер */
+footer {
+    text-align: left;
+    padding: 15px;
+    font-size: 15px;
+    color: #5a7da1;
+    border-top: 1px solid #cfdde7;
+    margin-top: 30px;
+}

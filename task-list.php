@@ -1,61 +1,44 @@
 <?php
-function getTasks() {
-    if (!file_exists('tasks.txt')) return [];
-
-    $tasks = [];
-    $lines = file('tasks.txt', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-
-    foreach ($lines as $line) {
-        $parts = explode('|', $line);
-        if (count($parts) === 2) {
-            $tasks[] = [
-                    'description' => urldecode($parts[0]),
-                    'estimate' => (int)$parts[1]
-            ];
-        }
-    }
-    return $tasks;
-}
+require_once 'functions.php';
 
 $tasks = getTasks();
+$success = $_GET['success'] ?? '';
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tasks</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body id="task-list-page">
+<header>
+    <nav>
+        <a href="index.php">Dashboard</a> |
+        <a href="employee-list.php">Employees</a> |
+        <a href="employee-form.php">Add Employee</a> |
+        <a href="task-list.php">Tasks</a> |
+        <a href="task-form.php">Add Task</a>
+    </nav>
+</header>
 
-<table border="1" width="100%">
-    <tr>
-        <td>Tasks</td>
-    </tr>
-    <tr>
-        <td>
-            <?php foreach ($tasks as $task): ?>
-                <table border="1" width="100%">
-                    <tr>
-                        <td colspan="2" height="32px">
-                            <?= htmlspecialchars($task['description']) ?>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td height="32px" width="50%">
-                            <?php for ($i = 1; $i <= 5; $i++): ?>
-                                <input type="checkbox" <?= $i <= $task['estimate'] ? 'checked' : '' ?> disabled>
-                            <?php endfor; ?>
-                        </td>
-                        <td height="32px" width="50%" align="right">
-                            Estimate: <?= $task['estimate'] ?>/5
-                        </td>
-                    </tr>
-                </table>
-            <?php endforeach; ?>
-        </td>
-    </tr>
-</table>
+<main>
+    <?php if ($success): ?>
+        <div id="message-block" class="success"><?= htmlspecialchars($success) ?></div>
+    <?php endif; ?>
 
+    <ul class="task-list">
+        <?php foreach ($tasks as $task): ?>
+            <li>
+                <div data-task-id="<?= $task['id'] ?>"><?= htmlspecialchars($task['description']) ?></div>
+                <a href="task-form.php?id=<?= $task['id'] ?>"
+                   id="task-edit-link-<?= $task['id'] ?>" class="edit-link">Edit</a>
+            </li>
+        <?php endforeach; ?>
+    </ul>
+
+    <p><a href="task-form.php">Add New Task</a></p>
+</main>
 </body>
 </html>

@@ -1,14 +1,41 @@
 <?php
+require_once 'functions.php';
+
+$id = $_GET['id'] ?? null;
+$employee = $id ? getEmployeeById($id) : null;
+$firstName = $employee['firstName'] ?? ($_POST['firstName'] ?? '');
+$lastName = $employee['lastName'] ?? ($_POST['lastName'] ?? '');
+$position = $employee['position'] ?? ($_POST['position'] ?? '');
+
+$error = '';
+$success = '';
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $firstName = trim($_POST['firstName'] ?? '');
-    $lastName = trim($_POST['lastName'] ?? '');
-
-    if (!empty($firstName) && !empty($lastName)) {
-        $data = urlencode($firstName) . '|' . urlencode($lastName) . PHP_EOL;
-        file_put_contents('employees.txt', $data, FILE_APPEND | LOCK_EX);
-
-        header('Location: employee-list.php');
+    if (isset($_POST['deleteButton'])) {
+        deleteEmployee($id);
+        header('Location: employee-list.php?success=Employee deleted successfully!');
         exit;
+    }
+
+    $firstName = trim($_POST['firstName']);
+    $lastName = trim($_POST['lastName']);
+    $position = trim($_POST['position']);
+
+    // Validation
+    if (strlen($firstName) < 1 || strlen($firstName) > 21) {
+        $error = 'First name must be between 1 and 21 characters.';
+    } elseif (strlen($lastName) < 2 || strlen($lastName) > 22) {
+        $error = 'Last name must be between 2 and 22 characters.';
+    } else {
+        if ($id) {
+            updateEmployee($id, $firstName, $lastName, $position);
+            header('Location: employee-list.php?success=Employee updated successfully!');
+            exit;
+        } else {
+            addEmployee($firstName, $lastName, $position);
+            header('Location: employee-list.php?success=Employee added successfully!');
+            exit;
+        }
     }
 }
 ?>
@@ -16,102 +43,54 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?= $id ? 'Edit Employee' : 'Add Employee' ?></title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body id="employee-form-page">
+<header>
+    <nav>
+        <a href="index.php">Dashboard</a> |
+        <a href="employee-list.php">Employees</a> |
+        <a href="employee-form.php">Add Employee</a> |
+        <a href="task-list.php">Tasks</a> |
+        <a href="task-form.php">Add Task</a>
+    </nav>
+</header>
 
-<table border="0" width="100%">
-    <td></td>
-    <td width="690px">
-        <table border="0" width="100%">
-            <tr>
-                <td><a href="index.html" id="dashboard-link">Dashboard</a> | <a href="employee-list.php" id="employee-list-link">Employees</a> | <a href="employee-form.html" id="employee-form-link">Add Employee</a> | <a href="task-list.php" id="task-list-link">Tasks</a> | <a href="task-form.php" id="task-form-link">Add Task</a></td>
-            </tr>
+<main>
+    <?php if ($error): ?>
+        <div id="error-block" class="error"><?= htmlspecialchars($error) ?></div>
+    <?php endif; ?>
 
-            <tr>
-                <td>
-                    <table border="0" width="100%">
-                        <tr>
-                            <td width="34%">
-                                <form method="post" action="employee-form.php">
-                                    <table border="1" width="100%">
-                                        <tr>
-                                            <td>Add Employee</td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <table border="0" width="100%">
-                                                    <td></td>
-                                                    <td width="450px">
-                                                        <table border="0" width="100%">
-                                                            <tr>
-                                                                <td colspan="2">
-                                                                    <br>
-                                                                </td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td width="30%" align="right">First name:</td>
-                                                                <td>
-                                                                    <input name="firstName" type="text" style="width: 100%; box-sizing: border-box;">
-                                                                </td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td align="right">Last name:</td>
-                                                                <td>
-                                                                    <input name="lastName" type="text" style="width: 100%; box-sizing: border-box">
-                                                                </td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td align="right">Position:</td>
-                                                                <td>
-                                                                    <select type="text" style="width: 100%; box-sizing: border-box">
-                                                                        <option></option>
-                                                                        <option value="o1">Manager</option>
-                                                                        <option value="o2">Designer</option>
-                                                                        <option value="o2">Developer</option>
-                                                                    </select>
-                                                                </td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td align="right">Picture:</td>
-                                                                <td>
-                                                                    <input type="file" id="fileInput" style="display: none">
-                                                                    <button onclick="document.getElementById('fileInput').click()">Choose File</button>
-                                                                    <span id="fileName">No file chosen</span>
-                                                                </td>
-                                                            </tr>
-                                                            <tr><td><br></td></tr>
-                                                            <tr>
-                                                                <td colspan="2" align="right">
-                                                                    <button name="submitButton" type="submit">Salvesta</button>
-                                                                </td>
-                                                            </tr>
-                                                        </table>
-                                                    </td>
-                                                    <td></td>
-                                                </table>
-                                            </td>
-                                        </tr>
-                                    </table>
-                                </form>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="3" height="100px"></td>
-                        </tr>
-                    </table>
-                </td>
-            </tr>
+    <form method="POST">
+        <div>
+            <label for="firstName">First Name:</label>
+            <input type="text" id="firstName" name="firstName"
+                   value="<?= htmlspecialchars($firstName) ?>" required>
+        </div>
 
-            <tr>
-                <td>
-                    <hr>icd0007 Sample Application</td>
+        <div>
+            <label for="lastName">Last Name:</label>
+            <input type="text" id="lastName" name="lastName"
+                   value="<?= htmlspecialchars($lastName) ?>" required>
+        </div>
 
-            </tr>
-        </table>
-    </td>
-    <td></td>
-</table>
+        <div>
+            <label for="picture">Picture:</label>
+            <input type="file" id="picture" name="picture" accept="image/*">
+        </div>
 
+        <div>
+            <button name="submitButton" id="submitButton" type="submit"><?= $id ? 'Update Employee' : 'Add Employee' ?></button>
+
+            <?php if ($id): ?>
+                <button type="submit" name="deleteButton" class="delete">Delete Employee</button>
+            <?php endif; ?>
+        </div>
+    </form>
+
+    <p><a href="employee-list.php">Back to Employee List</a></p>
+</main>
 </body>
 </html>
