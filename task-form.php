@@ -4,7 +4,10 @@ require_once 'functions.php';
 $id = $_GET['id'] ?? null;
 $task = $id ? getTaskById($id) : null;
 $description = $task['description'] ?? ($_POST['description'] ?? '');
+$employeeId = $task['employeeId'] ?? ($_POST['employeeId'] ?? '');
+$isCompleted = $task['isCompleted'] ?? (isset($_POST['isCompleted']) ? 1 : 0);
 
+$employees = getEmployees();
 $error = '';
 $success = '';
 
@@ -16,17 +19,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     $description = trim($_POST['description']);
+    $employeeId = $_POST['employeeId'] !== '' ? $_POST['employeeId'] : null;
+    $isCompleted = isset($_POST['isCompleted']) ? 1 : 0;
 
     // Validation
     if (strlen($description) < 5 || strlen($description) > 40) {
         $error = 'Description must be between 5 and 40 characters.';
     } else {
         if ($id) {
-            updateTask($id, $description);
+            updateTask($id, $description, $employeeId, $isCompleted);
             header('Location: task-list.php?success=Task updated successfully!');
             exit;
         } else {
-            addTask($description);
+            addTask($description, $employeeId, $isCompleted);
             header('Location: task-list.php?success=Task added successfully!');
             exit;
         }
@@ -61,6 +66,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div>
             <label for="description">Description:</label>
             <textarea id="description" name="description" required><?= htmlspecialchars($description) ?></textarea>
+        </div>
+
+        <div>
+            <label for="employeeId">Assign to Employee:</label>
+            <select id="employeeId" name="employeeId">
+                <option value="">-- Not assigned --</option>
+                <?php foreach ($employees as $employee): ?>
+                    <option value="<?= $employee['id'] ?>"
+                            <?= $employeeId == $employee['id'] ? 'selected' : '' ?>>
+                        <?= htmlspecialchars($employee['firstName'] . ' ' . $employee['lastName']) ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+
+        <div>
+            <label for="isCompleted">
+                <input type="checkbox" id="isCompleted" name="isCompleted"
+                        <?= $isCompleted ? 'checked' : '' ?>>
+                Task Completed
+            </label>
         </div>
 
         <div>

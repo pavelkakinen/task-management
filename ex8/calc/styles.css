@@ -1,0 +1,12 @@
+a {
+    text-decoration: none;
+}
+
+#error-block {
+    color: red;
+    margin-bottom: 1rem;
+}
+
+#message-block {
+    font-weight: bold;
+}

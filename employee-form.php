@@ -77,6 +77,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
 
         <div>
+            <label for="position">Position:</label>
+            <input type="text" id="position" name="position"
+                   value="<?= htmlspecialchars($position) ?>">
+        </div>
+
+        <div>
             <label for="picture">Picture:</label>
             <input type="file" id="picture" name="picture" accept="image/*">
         </div>

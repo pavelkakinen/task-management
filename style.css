@@ -1,4 +1,3 @@
-/* Общие стили */
 * {
     margin: 0;
     padding: 0;
@@ -150,6 +149,11 @@ h2 {
     font-size: 0.9em;
 }
 
+.employee-item .task-count {
+    color: #007bff;
+    font-size: 0.9em;
+}
+
 /* Задачи на Dashboard */
 .task {
     padding: 10px 0;
@@ -164,6 +168,13 @@ h2 {
 .task .title {
     font-weight: 500;
     color: #333;
+}
+
+.task small {
+    display: block;
+    color: #666;
+    font-size: 0.85em;
+    margin-top: 4px;
 }
 
 /* Формы */
@@ -185,7 +196,8 @@ label {
 }
 
 input[type="text"],
-textarea {
+textarea,
+select {
     width: 100%;
     padding: 10px;
     border: 1px solid #ddd;
@@ -194,7 +206,8 @@ textarea {
 }
 
 input[type="text"]:focus,
-textarea:focus {
+textarea:focus,
+select:focus {
     outline: none;
     border-color: #007bff;
     box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
@@ -203,6 +216,19 @@ textarea:focus {
 textarea {
     resize: vertical;
     min-height: 80px;
+}
+
+/* Checkbox styling */
+input[type="checkbox"] {
+    width: auto;
+    margin-right: 8px;
+    cursor: pointer;
+}
+
+label:has(input[type="checkbox"]) {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
 }
 
 /* Кнопки */

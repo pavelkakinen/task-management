@@ -1,107 +1,100 @@
 <?php
+require_once 'db.php';
+
+// Employee functions
 function getEmployees() {
-    if (!file_exists('employees.json')) {
-        return [];
-    }
-    $data = file_get_contents('employees.json');
-    return json_decode($data, true) ?: [];
+    $pdo = getDbConnection();
+    $stmt = $pdo->query("SELECT * FROM employees ORDER BY id");
+    return $stmt->fetchAll();
+}
+
+function getEmployeesWithTaskCount() {
+    $pdo = getDbConnection();
+    $sql = "SELECT e.*, COUNT(t.id) as taskCount 
+            FROM employees e 
+            LEFT JOIN tasks t ON e.id = t.employeeId 
+            GROUP BY e.id 
+            ORDER BY e.id";
+    $stmt = $pdo->query($sql);
+    return $stmt->fetchAll();
 }
 
 function getEmployeeById($id) {
-    $employees = getEmployees();
-    foreach ($employees as $employee) {
-        if ($employee['id'] == $id) {
-            return $employee;
-        }
-    }
-    return null;
+    $pdo = getDbConnection();
+    $stmt = $pdo->prepare("SELECT * FROM employees WHERE id = ?");
+    $stmt->execute([$id]);
+    return $stmt->fetch();
 }
 
 function addEmployee($firstName, $lastName, $position) {
-    $employees = getEmployees();
-    $id = uniqid();
-    $employees[] = [
-        'id' => $id,
-        'firstName' => $firstName,
-        'lastName' => $lastName,
-        'position' => $position
-    ];
-    file_put_contents('employees.json', json_encode($employees, JSON_PRETTY_PRINT));
-    return $id;
+    $pdo = getDbConnection();
+    $stmt = $pdo->prepare("INSERT INTO employees (firstName, lastName, position) VALUES (?, ?, ?)");
+    $stmt->execute([$firstName, $lastName, $position]);
+    return $pdo->lastInsertId();
 }
 
 function updateEmployee($id, $firstName, $lastName, $position) {
-    $employees = getEmployees();
-    foreach ($employees as &$employee) {
-        if ($employee['id'] == $id) {
-            $employee['firstName'] = $firstName;
-            $employee['lastName'] = $lastName;
-            $employee['position'] = $position;
-            break;
-        }
-    }
-    file_put_contents('employees.json', json_encode($employees, JSON_PRETTY_PRINT));
+    $pdo = getDbConnection();
+    $stmt = $pdo->prepare("UPDATE employees SET firstName = ?, lastName = ?, position = ? WHERE id = ?");
+    $stmt->execute([$firstName, $lastName, $position, $id]);
 }
 
 function deleteEmployee($id) {
-    $employees = getEmployees();
-    $newEmployees = [];
-    foreach ($employees as $employee) {
-        if ($employee['id'] != $id) {
-            $newEmployees[] = $employee;
-        }
-    }
-    file_put_contents('employees.json', json_encode($newEmployees, JSON_PRETTY_PRINT));
+    $pdo = getDbConnection();
+    $stmt = $pdo->prepare("DELETE FROM employees WHERE id = ?");
+    $stmt->execute([$id]);
 }
 
+// Task functions
 function getTasks() {
-    if (!file_exists('tasks.json')) {
-        return [];
-    }
-    $data = file_get_contents('tasks.json');
-    return json_decode($data, true) ?: [];
+    $pdo = getDbConnection();
+    $stmt = $pdo->query("SELECT * FROM tasks ORDER BY id");
+    return $stmt->fetchAll();
+}
+
+function getTasksWithEmployees() {
+    $pdo = getDbConnection();
+    $sql = "SELECT t.*, e.firstName, e.lastName 
+            FROM tasks t 
+            LEFT JOIN employees e ON t.employeeId = e.id 
+            ORDER BY t.id";
+    $stmt = $pdo->query($sql);
+    return $stmt->fetchAll();
 }
 
 function getTaskById($id) {
-    $tasks = getTasks();
-    foreach ($tasks as $task) {
-        if ($task['id'] == $id) {
-            return $task;
-        }
-    }
-    return null;
+    $pdo = getDbConnection();
+    $stmt = $pdo->prepare("SELECT * FROM tasks WHERE id = ?");
+    $stmt->execute([$id]);
+    return $stmt->fetch();
 }
 
-function addTask($description) {
-    $tasks = getTasks();
-    $id = uniqid();
-    $tasks[] = [
-        'id' => $id,
-        'description' => $description
-    ];
-    file_put_contents('tasks.json', json_encode($tasks, JSON_PRETTY_PRINT));
-    return $id;
+function addTask($description, $employeeId = null, $isCompleted = false) {
+    $pdo = getDbConnection();
+    $stmt = $pdo->prepare("INSERT INTO tasks (description, employeeId, isCompleted) VALUES (?, ?, ?)");
+    $stmt->execute([$description, $employeeId, $isCompleted ? 1 : 0]);
+    return $pdo->lastInsertId();
 }
 
-function updateTask($id, $description) {
-    $tasks = getTasks();
-    foreach ($tasks as &$task) {
-        if ($task['id'] == $id) {
-            $task['description'] = $description;
-            break;
-        }
-    }
-    file_put_contents('tasks.json', json_encode($tasks, JSON_PRETTY_PRINT));
+function updateTask($id, $description, $employeeId = null, $isCompleted = false) {
+    $pdo = getDbConnection();
+    $stmt = $pdo->prepare("UPDATE tasks SET description = ?, employeeId = ?, isCompleted = ? WHERE id = ?");
+    $stmt->execute([$description, $employeeId, $isCompleted ? 1 : 0, $id]);
 }
 
 function deleteTask($id) {
-    $tasks = getTasks();
-    $newTasks = [];
-    foreach ($tasks as $task) {
-        if ($task['id'] != $id) {
-            $newTasks[] = $task;
-        }
+    $pdo = getDbConnection();
+    $stmt = $pdo->prepare("DELETE FROM tasks WHERE id = ?");
+    $stmt->execute([$id]);
+}
+
+function getTaskState($task) {
+    if ($task['isCompleted']) {
+        return 'Closed';
+    } elseif ($task['employeeId']) {
+        return 'Pending';
+    } else {
+        return 'Open';
     }
-    file_put_contents('tasks.json', json_encode($newTasks, JSON_PRETTY_PRINT));
 }
 ?>
