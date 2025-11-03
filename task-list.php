@@ -40,12 +40,7 @@ $success = $_GET['success'] ?? '';
                         <div data-task-id="<?= $task['id'] ?>">
                             <?= htmlspecialchars($task['description']) ?>
                         </div>
-                        <?php if ($task['employeeId']): ?>
-                            <small>Assigned to: <?= htmlspecialchars($task['firstName'] . ' ' . $task['lastName']) ?></small>
-                        <?php else: ?>
-                            <small>Not assigned</small>
-                        <?php endif; ?>
-                        <small>Status: <?= getTaskState($task) ?></small>
+                        <small>Status: <span id="task-state-<?= $task['id'] ?>"><?= getTaskState($task) ?></span></small>
                     </div>
                     <a href="task-form.php?id=<?= $task['id'] ?>"
                        id="task-edit-link-<?= $task['id'] ?>" class="edit-link">Edit</a>
