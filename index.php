@@ -51,9 +51,7 @@ $tasks = getTasksWithEmployees();
                             <div class="task">
                                 <div class="title">
                                     <div><?= htmlspecialchars($task['description']) ?></div>
-                                    <?php if ($task['employeeId']): ?>
-                                        <small>Assigned to: <?= htmlspecialchars($task['firstName'] . ' ' . $task['lastName']) ?></small>
-                                    <?php endif; ?>
+                                    <?php if ($task['employeeId']): ?><?php endif; ?>
                                     <div><strong>State: <span id="task-state-<?= $task['id'] ?>"><?= getTaskState($task) ?></span></strong></div>
                                 </div>
                             </div>

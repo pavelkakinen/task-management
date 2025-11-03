@@ -1,7 +1,6 @@
 <?php
 require_once 'db.php';
 
-// Employee functions
 function getEmployees() {
     $pdo = getDbConnection();
     $stmt = $pdo->query("SELECT * FROM employees ORDER BY id");
@@ -43,13 +42,6 @@ function deleteEmployee($id) {
     $pdo = getDbConnection();
     $stmt = $pdo->prepare("DELETE FROM employees WHERE id = ?");
     $stmt->execute([$id]);
-}
-
-// Task functions
-function getTasks() {
-    $pdo = getDbConnection();
-    $stmt = $pdo->query("SELECT * FROM tasks ORDER BY id");
-    return $stmt->fetchAll();
 }
 
 function getTasksWithEmployees() {

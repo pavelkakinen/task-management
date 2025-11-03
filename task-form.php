@@ -67,9 +67,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <label for="description">Description:</label>
             <textarea id="description" name="description" required><?= htmlspecialchars($description) ?></textarea>
         </div>
+        
+        <div>
+            <label for="estimate">Estimate:</label>
+            <input type="radio" name="estimate" checked="checked">1
+            <input type="radio" name="estimate" checked="checked">2
+            <input type="radio" name="estimate" checked="checked">3
+            <input type="radio" name="estimate" checked="checked">4
+            <input type="radio" name="estimate" checked="checked">5
+        </div>
 
         <div>
-            <label for="employeeId">Assign to Employee:</label>
+            <label for="employeeId">Assigned to:</label>
             <select id="employeeId" name="employeeId">
                 <option value="">-- Not assigned --</option>
                 <?php foreach ($employees as $employee): ?>

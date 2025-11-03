@@ -21,20 +21,17 @@ body {
     width: 100%;
 }
 
-/* Центрирование для всех страниц кроме Dashboard */
 body:not(#dashboard-page) #root {
     max-width: 800px;
     margin: 0 auto;
     width: 100%;
 }
 
-/* Для страниц с формами - уже центр, но ограничим ширину */
 #employee-form-page #root,
 #task-form-page #root {
     max-width: 600px;
 }
 
-/* Навигация */
 nav {
     background-color: #fff;
     padding: 15px 20px;
@@ -56,7 +53,6 @@ nav a:hover {
     text-decoration: underline;
 }
 
-/* Основной контент */
 main {
     background-color: #fff;
     padding: 30px;
@@ -66,13 +62,11 @@ main {
     flex: 1;
 }
 
-/* Для списков - центрирование содержимого */
 #employee-list-page main,
 #task-list-page main {
     text-align: left;
 }
 
-/* Заголовки */
 h2 {
     color: #333;
     margin-bottom: 20px;
@@ -81,7 +75,6 @@ h2 {
     text-align: center;
 }
 
-/* Карточки на Dashboard */
 #dash-layout {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -108,7 +101,6 @@ h2 {
     padding: 20px;
 }
 
-/* Списки сотрудников и задач */
 .employee-list,
 .task-list {
     list-style: none;
@@ -128,7 +120,6 @@ h2 {
     border-bottom: none;
 }
 
-/* Элементы сотрудников на Dashboard */
 .employee-item {
     padding: 10px 0;
     border-bottom: 1px solid #e9ecef;
@@ -154,7 +145,6 @@ h2 {
     font-size: 0.9em;
 }
 
-/* Задачи на Dashboard */
 .task {
     padding: 10px 0;
     border-bottom: 1px solid #e9ecef;
@@ -177,7 +167,6 @@ h2 {
     margin-top: 4px;
 }
 
-/* Формы */
 form {
     max-width: 500px;
     margin: 0 auto;
@@ -218,7 +207,6 @@ textarea {
     min-height: 80px;
 }
 
-/* Checkbox styling */
 input[type="checkbox"] {
     width: auto;
     margin-right: 8px;
@@ -231,7 +219,6 @@ label:has(input[type="checkbox"]) {
     cursor: pointer;
 }
 
-/* Кнопки */
 button {
     padding: 10px 20px;
     border: none;
@@ -260,13 +247,11 @@ button.delete:hover {
     background-color: #c82333;
 }
 
-/* Группа кнопок в формах */
 form > div:last-child {
     text-align: center;
     margin-top: 30px;
 }
 
-/* Ссылки редактирования */
 .edit-link {
     color: #007bff;
     text-decoration: none;
@@ -282,7 +267,6 @@ form > div:last-child {
     text-decoration: none;
 }
 
-/* Сообщения */
 #message-block,
 #error-block {
     padding: 12px 15px;
@@ -303,7 +287,6 @@ form > div:last-child {
     border: 1px solid #f5c6cb;
 }
 
-/* Файловый инпут */
 input[type="file"] {
     padding: 8px;
     border: 1px solid #ddd;
@@ -312,7 +295,6 @@ input[type="file"] {
     width: 100%;
 }
 
-/* Параграфы с ссылками */
 p {
     margin-top: 20px;
     text-align: center;
@@ -327,7 +309,6 @@ p a:hover {
     text-decoration: underline;
 }
 
-/* Футер */
 footer {
     text-align: center;
     color: #666;
@@ -335,16 +316,13 @@ footer {
     font-size: 0.9em;
 }
 
-/* Специфичные стили для разных страниц */
 
-/* Страница Dashboard */
 #dashboard-page #dash-layout {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 20px;
 }
 
-/* Страница списка сотрудников */
 #employee-list-page .employee-list li {
     background-color: #f8f9fa;
     margin-bottom: 8px;
@@ -352,7 +330,6 @@ footer {
     padding: 15px;
 }
 
-/* Страница списка задач */
 #task-list-page .task-list li {
     background-color: #f8f9fa;
     margin-bottom: 8px;
@@ -360,20 +337,17 @@ footer {
     padding: 15px;
 }
 
-/* Заголовки на страницах списков */
 #employee-list-page h2,
 #task-list-page h2 {
     text-align: center;
     margin-bottom: 30px;
 }
 
-/* Центрирование текста "No employees found" и подобных */
 #employee-list-page p,
 #task-list-page p {
     text-align: center;
 }
 
-/* Адаптивность */
 @media (max-width: 768px) {
     #dash-layout {
         grid-template-columns: 1fr;
