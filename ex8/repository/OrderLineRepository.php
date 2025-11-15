@@ -9,6 +9,16 @@ class OrderLineRepository {
     }
 
     public function getOrderLines(): array {
-        return [];
+        $lines = file($this->filePath);
+
+        $orderLines = [];
+        foreach ($lines as $line) {
+
+            [$name, $price, $inStock] = explode(';', trim($line));
+
+            $orderLines[] = new OrderLine(
+                $name, floatval($price), boolval($inStock));
+        }
+        return $orderLines;
     }
 }

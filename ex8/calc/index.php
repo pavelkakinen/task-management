@@ -8,19 +8,59 @@ $temperature = $_POST['temperature'] ?? null;
 if ($cmd === 'ctf_form') {
     $data = [
         'cmd' => 'ctf_calculate',
-        'title' => 'Celsius to Fahrenheit'
+        'title' => 'Celsius to Fahrenheit',
+        'temperature' => '',
+        'errors' => []
     ];
-
     render('form_fragment.latte', $data);
 
 } else if ($cmd === 'ctf_calculate') {
-    $input = $temperature;
-    $result = celsiusToFahrenheit($input);
-    $message = "$input degrees in Celsius is $result degrees in Fahrenheit";
-    render('result_fragment.latte', ['message' => $message]);
+    $errors = validate($temperature);
+
+    if (empty($errors)) {
+        $input = floatval($temperature);
+        $result = celsiusToFahrenheit($input);
+        $message = "$input degrees in Celsius is $result degrees in Fahrenheit";
+        render('result_fragment.latte', ['message' => $message]);
+    } else {
+        $data = [
+            'cmd' => 'ctf_calculate',
+            'title' => 'Celsius to Fahrenheit',
+            'temperature' => $temperature,
+            'errors' => $errors
+        ];
+        render('form_fragment.latte', $data);
+    }
+
+} else if ($cmd === 'ftc_form') {
+    $data = [
+        'cmd' => 'ftc_calculate',
+        'title' => 'Fahrenheit to Celsius',
+        'temperature' => '',
+        'errors' => []
+    ];
+    render('form_fragment.latte', $data);
+
+} else if ($cmd === 'ftc_calculate') {
+    $errors = validate($temperature);
+
+    if (empty($errors)) {
+        $input = floatval($temperature);
+        $result = fahrenheitToCelsius($input);
+        $message = "$input degrees in Fahrenheit is $result degrees in Celsius";
+        render('result_fragment.latte', ['message' => $message]);
+    } else {
+        $data = [
+            'cmd' => 'ftc_calculate',
+            'title' => 'Fahrenheit to Celsius',
+            'temperature' => $temperature,
+            'errors' => $errors
+        ];
+        render('form_fragment.latte', $data);
+    }
 
 } else {
-    throw new Error('programming error');
+    throw new Error('Programming error: unknown command');
 }
 
 function render(string $subTemplate, array $data): void {

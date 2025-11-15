@@ -3,13 +3,9 @@
 require_once 'OrderLine.php';
 require_once 'OrderLineRepository.php';
 
-$lines = file('orders.txt');
+$repo = new OrderLineRepository('orders.txt');
 
-$orderLines = [];
-foreach ($lines as $line) {
-
-    [$name, $price, $inStock] = explode(';', trim($line));
-
-    printf('name: %s, price: %s; in stock: %s' . PHP_EOL,
-        $name, $price, $inStock);
+foreach ($repo->getOrderLines() as $line) {
+    printf("%s %s %s\n",
+        $line->productName, $line->price, $line->inStock);
 }
