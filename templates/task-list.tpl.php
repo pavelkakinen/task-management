@@ -18,35 +18,8 @@
 </header>
 
 <main>
-    <?php if ($success): ?>
-        <div id="message-block" class="success"><?= e($success) ?></div>
-    <?php endif; ?>
-
-    <h2>Tasks (<?= count($tasks) ?>)</h2>
-
-    <?php if (empty($tasks)): ?>
-        <p>No tasks found.</p>
-    <?php else: ?>
-        <ul class="task-list">
-            <?php foreach ($tasks as $task): ?>
-                <li>
-                    <div>
-                        <div data-task-id="<?= $task->id ?>">
-                            <?= e($task->description) ?>
-                        </div>
-                        <?php if ($task->employeeId): ?>
-                            <small>Assigned to: <?= e($task->getEmployeeFullName()) ?></small>
-                        <?php else: ?>
-                            <small>Not assigned</small>
-                        <?php endif; ?>
-                        <small>Status: <span id="task-state-<?= $task->id ?>"><?= $task->getState() ?></span></small>
-                    </div>
-                    <a href="?command=task_form&id=<?= $task->id ?>"
-                       id="task-edit-link-<?= $task->id ?>" class="edit-link">Edit</a>
-                </li>
-            <?php endforeach; ?>
-        </ul>
-    <?php endif; ?>
+    <?= $successMessage ?>
+    <?= $taskListHtml ?>
 
     <p><a href="?command=task_form">Add New Task</a></p>
 </main>

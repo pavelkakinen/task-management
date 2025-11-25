@@ -21,44 +21,14 @@
             <div class="content-card">
                 <div class="content-card-header">Employees</div>
                 <div class="content-card-content">
-                    <?php if (empty($employees)): ?>
-                        <p>No employees found.</p>
-                    <?php else: ?>
-                        <?php foreach ($employees as $employee): ?>
-                            <div class="employee-item">
-                                <span class="name"><?= e($employee->getFullName()) ?></span>
-                                <br><span class="position"><?= e($employee->position) ?></span>
-                                <br><span class="task-count">Tasks: <span id="employee-task-count-<?= $employee->id ?>"><?= $employee->taskCount ?></span></span>
-                            </div>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
+                    <?= $employeesHtml ?>
                 </div>
             </div>
 
             <div class="content-card">
                 <div class="content-card-header">Tasks</div>
                 <div class="content-card-content">
-                    <?php if (empty($tasks)): ?>
-                        <p>No tasks found.</p>
-                    <?php else: ?>
-                        <?php foreach ($tasks as $task): ?>
-                            <div class="task">
-                                <div class="title">
-                                    <div><?= e($task->description) ?></div>
-                                    <?php if ($task->employeeId): ?>
-                                        <small>Assigned to: <?= e($task->getEmployeeFullName()) ?></small>
-                                    <?php endif; ?>
-                                    <div>
-                                        <strong>State:
-                                            <span id="task-state-<?= $task->id ?>">
-                                                <?= $task->getState() ?>
-                                            </span>
-                                        </strong>
-                                    </div>
-                                </div>
-                            </div>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
+                    <?= $tasksHtml ?>
                 </div>
             </div>
         </div>

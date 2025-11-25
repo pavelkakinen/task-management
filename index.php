@@ -1,6 +1,5 @@
 <?php
 
-// Autoload classes
 spl_autoload_register(function ($class) {
     $paths = [
         __DIR__ . '/src/dto/',
@@ -17,13 +16,10 @@ spl_autoload_register(function ($class) {
     }
 });
 
-// Load template engine
 require_once __DIR__ . '/vendor/tpl.php';
 
-// Get command parameter
 $command = $_GET['command'] ?? 'dashboard';
 
-// Route to appropriate handler
 switch ($command) {
     case 'dashboard':
         handleDashboard();
@@ -50,7 +46,6 @@ switch ($command) {
         exit;
 }
 
-// ============= HANDLERS =============
 
 function handleDashboard(): void {
     $employeeRepo = new EmployeeRepository();
@@ -59,9 +54,43 @@ function handleDashboard(): void {
     $employees = $employeeRepo->findAllWithTaskCount();
     $tasks = $taskRepo->findAllWithEmployees();
 
+    $employeesHtml = '';
+    if (empty($employees)) {
+        $employeesHtml = '<p>No employees found.</p>';
+    } else {
+        foreach ($employees as $employee) {
+            $employeesHtml .= '<div class="employee-item">';
+            $employeesHtml .= '<span class="name">' . htmlspecialchars($employee->getFullName()) . '</span>';
+            $employeesHtml .= '<br><span class="position">' . htmlspecialchars($employee->position) . '</span>';
+            $employeesHtml .= '<br><span class="task-count">Tasks: <span id="employee-task-count-' . $employee->id . '">' . $employee->taskCount . '</span></span>';
+            $employeesHtml .= '</div>';
+        }
+    }
+
+    $tasksHtml = '';
+    if (empty($tasks)) {
+        $tasksHtml = '<p>No tasks found.</p>';
+    } else {
+        foreach ($tasks as $task) {
+            $tasksHtml .= '<div class="task">';
+            $tasksHtml .= '<div class="title">';
+            $tasksHtml .= '<div>' . htmlspecialchars($task->description) . '</div>';
+
+            if ($task->employeeId) {
+                $tasksHtml .= '<small>Assigned to: ' . htmlspecialchars($task->getEmployeeFullName()) . '</small>';
+            }
+
+            $tasksHtml .= '<div><strong>State: <span id="task-state-' . $task->id . '">';
+            $tasksHtml .= $task->getState();
+            $tasksHtml .= '</span></strong></div>';
+            $tasksHtml .= '</div>';
+            $tasksHtml .= '</div>';
+        }
+    }
+
     render('dashboard', [
-        'employees' => $employees,
-        'tasks' => $tasks
+        'employeesHtml' => $employeesHtml,
+        'tasksHtml' => $tasksHtml
     ]);
 }
 
@@ -70,9 +99,35 @@ function handleEmployeeList(): void {
     $employees = $employeeRepo->findAll();
     $success = $_GET['success'] ?? '';
 
+    $successMessage = '';
+    if ($success) {
+        $successMessage = '<div id="message-block" class="success">' . htmlspecialchars($success) . '</div>';
+    }
+
+    $employeeListHtml = '<h2>Employees (' . count($employees) . ')</h2>';
+
+    if (count($employees) === 0) {
+        $employeeListHtml .= '<p>No employees found.</p>';
+    } else {
+        $employeeListHtml .= '<ul class="employee-list">';
+
+        foreach ($employees as $employee) {
+            $employeeListHtml .= '<li>';
+            $employeeListHtml .= '<div data-employee-id="' . $employee->id . '">';
+            $employeeListHtml .= htmlspecialchars($employee->getFullName());
+            $employeeListHtml .= '</div>';
+            $employeeListHtml .= ' - ' . htmlspecialchars($employee->position);
+            $employeeListHtml .= ' <a href="?command=employee_form&id=' . $employee->id . '" ';
+            $employeeListHtml .= 'id="employee-edit-link-' . $employee->id . '" class="edit-link">Edit</a>';
+            $employeeListHtml .= '</li>';
+        }
+
+        $employeeListHtml .= '</ul>';
+    }
+
     render('employee-list', [
-        'employees' => $employees,
-        'success' => $success
+        'successMessage' => $successMessage,
+        'employeeListHtml' => $employeeListHtml
     ]);
 }
 
@@ -108,7 +163,6 @@ function handleEmployeeForm(): void {
             exit;
         }
     } else {
-        // Load existing employee for edit
         if ($id) {
             $employeeRepo = new EmployeeRepository();
             $employee = $employeeRepo->findById($id);
@@ -117,9 +171,54 @@ function handleEmployeeForm(): void {
         }
     }
 
+    $errorMessage = '';
+    if ($error) {
+        $errorMessage = '<div id="error-block" class="error">' . htmlspecialchars($error) . '</div>';
+    }
+
+    $formHtml = '<form method="POST">';
+
+    $formHtml .= '<div>';
+    $formHtml .= '<label for="firstName">First Name:</label>';
+    $formHtml .= '<input type="text" id="firstName" name="firstName" ';
+    $formHtml .= 'value="' . htmlspecialchars($employee->firstName) . '" required>';
+    $formHtml .= '</div>';
+
+    $formHtml .= '<div>';
+    $formHtml .= '<label for="lastName">Last Name:</label>';
+    $formHtml .= '<input type="text" id="lastName" name="lastName" ';
+    $formHtml .= 'value="' . htmlspecialchars($employee->lastName) . '" required>';
+    $formHtml .= '</div>';
+
+    $formHtml .= '<div>';
+    $formHtml .= '<label for="position">Position:</label>';
+    $formHtml .= '<input type="text" id="position" name="position" ';
+    $formHtml .= 'value="' . htmlspecialchars($employee->position) . '">';
+    $formHtml .= '</div>';
+
+    $formHtml .= '<div>';
+    $formHtml .= '<label for="picture">Picture:</label>';
+    $formHtml .= '<input type="file" id="picture" name="picture" accept="image/*">';
+    $formHtml .= '</div>';
+
+    $formHtml .= '<div>';
+    $formHtml .= '<button name="submitButton" id="submitButton" type="submit">';
+    $formHtml .= $id ? 'Update Employee' : 'Add Employee';
+    $formHtml .= '</button>';
+
+    if ($id) {
+        $formHtml .= ' <button type="submit" name="deleteButton" id="deleteButton" class="delete">';
+        $formHtml .= 'Delete Employee';
+        $formHtml .= '</button>';
+    }
+
+    $formHtml .= '</div>';
+    $formHtml .= '</form>';
+
     render('employee-form', [
-        'employee' => $employee,
-        'error' => $error
+        'pageTitle' => $id ? 'Edit Employee' : 'Add Employee',
+        'errorMessage' => $errorMessage,
+        'formHtml' => $formHtml
     ]);
 }
 
@@ -128,9 +227,44 @@ function handleTaskList(): void {
     $tasks = $taskRepo->findAllWithEmployees();
     $success = $_GET['success'] ?? '';
 
+    $successMessage = '';
+    if ($success) {
+        $successMessage = '<div id="message-block" class="success">' . htmlspecialchars($success) . '</div>';
+    }
+
+    $taskListHtml = '<h2>Tasks (' . count($tasks) . ')</h2>';
+
+    if (empty($tasks)) {
+        $taskListHtml .= '<p>No tasks found.</p>';
+    } else {
+        $taskListHtml .= '<ul class="task-list">';
+
+        foreach ($tasks as $task) {
+            $taskListHtml .= '<li>';
+            $taskListHtml .= '<div>';
+            $taskListHtml .= '<div data-task-id="' . $task->id . '">';
+            $taskListHtml .= htmlspecialchars($task->description);
+            $taskListHtml .= '</div>';
+
+            if ($task->employeeId) {
+                $taskListHtml .= '<small>Assigned to: ' . htmlspecialchars($task->getEmployeeFullName()) . '</small>';
+            } else {
+                $taskListHtml .= '<small>Not assigned</small>';
+            }
+
+            $taskListHtml .= '<small>Status: <span id="task-state-' . $task->id . '">' . $task->getState() . '</span></small>';
+            $taskListHtml .= '</div>';
+            $taskListHtml .= '<a href="?command=task_form&id=' . $task->id . '" ';
+            $taskListHtml .= 'id="task-edit-link-' . $task->id . '" class="edit-link">Edit</a>';
+            $taskListHtml .= '</li>';
+        }
+
+        $taskListHtml .= '</ul>';
+    }
+
     render('task-list', [
-        'tasks' => $tasks,
-        'success' => $success
+        'successMessage' => $successMessage,
+        'taskListHtml' => $taskListHtml
     ]);
 }
 
@@ -139,12 +273,10 @@ function handleTaskForm(): void {
     $error = '';
     $task = null;
 
-    // Get employees list (always needed for the form)
     $employeeRepo = new EmployeeRepository();
     $employees = $employeeRepo->findAll();
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        // Handle DELETE
         if (isset($_POST['deleteButton']) && $id) {
             $taskRepo = new TaskRepository();
             $taskRepo->delete($id);
@@ -152,16 +284,12 @@ function handleTaskForm(): void {
             exit;
         }
 
-        // Handle SAVE
         $task = new TaskDto(
             $id,
             $_POST['description'] ?? '',
             !empty($_POST['employeeId']) ? (int)$_POST['employeeId'] : null,
             isset($_POST['isCompleted'])
         );
-
-        // Note: We intentionally ignore 'estimate' and any other unknown POST fields
-        // This is for security - only accept known fields;
 
         $error = TaskValidator::validate($task);
 
@@ -173,7 +301,6 @@ function handleTaskForm(): void {
             exit;
         }
     } else {
-        // Load existing task for edit
         if ($id) {
             $taskRepo = new TaskRepository();
             $task = $taskRepo->findById($id);

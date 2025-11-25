@@ -18,28 +18,8 @@
 </header>
 
 <main>
-    <?php if ($success): ?>
-        <div id="message-block" class="success"><?= e($success) ?></div>
-    <?php endif; ?>
-
-    <h2>Employees (<?= count($employees) ?>)</h2>
-
-    <?php if (count($employees) === 0): ?>
-        <p>No employees found.</p>
-    <?php else: ?>
-        <ul class="employee-list">
-            <?php foreach ($employees as $employee): ?>
-                <li>
-                    <div data-employee-id="<?= $employee->id ?>">
-                        <?= e($employee->getFullName()) ?>
-                    </div>
-                    - <?= e($employee->position) ?>
-                    <a href="?command=employee_form&id=<?= $employee->id ?>"
-                       id="employee-edit-link-<?= $employee->id ?>" class="edit-link">Edit</a>
-                </li>
-            <?php endforeach; ?>
-        </ul>
-    <?php endif; ?>
+    <?= $successMessage ?>
+    <?= $employeeListHtml ?>
 
     <p><a href="?command=employee_form">Add New Employee</a></p>
 </main>
