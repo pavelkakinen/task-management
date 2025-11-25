@@ -9,7 +9,7 @@ require_once 'db.php';
 echo "Starting migration...\n";
 
 try {
-    $pdo = getDbConnection();
+    $pdo = getConnection();
 
     // Migrate employees
     if (file_exists('employees.json')) {

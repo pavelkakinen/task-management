@@ -4,7 +4,7 @@ define('DB_NAME', 'pavelkakinen');
 define('DB_USER', 'pavelkakinen');
 define('DB_PASS', 'e0c8bf71');
 
-function getDbConnection() {
+function getConnection() {
     static $pdo = null;
 
     if ($pdo === null) {

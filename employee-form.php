@@ -50,11 +50,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body id="employee-form-page">
 <header>
     <nav>
-        <a href="index.php">Dashboard</a> |
-        <a href="employee-list.php">Employees</a> |
-        <a href="employee-form.php">Add Employee</a> |
-        <a href="task-list.php">Tasks</a> |
-        <a href="task-form.php">Add Task</a>
+        <a href="?page=index.php" id="dashboard-link">Dashboard</a>
+        <a href="?page=employee-list" id="employee-list-link">Employees</a>
+        <a href="?page=employee-form" id="employee-form-link">Add Employee</a>
+        <a href="?page=task-list" id="task-list-link">Tasks</a>
+        <a href="?page=task-form" id="task-form-link">Add Task</a>
     </nav>
 </header>
 
