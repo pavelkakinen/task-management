@@ -15,7 +15,7 @@ class TaskDto {
         bool $isCompleted = false,
         ?string $employeeFirstName = null,
         ?string $employeeLastName = null
-    ){
+    ) {
         $this->id = $id;
         $this->description = $description;
         $this->employeeId = $employeeId;
@@ -29,22 +29,20 @@ class TaskDto {
             $data['id'] ?? null,
             $data['description'] ?? '',
             $data['employeeId'] ?? null,
-            $data['isCompleted'] ?? false,
-            $data['employeeFirstName'] ?? null,
-            $data['employeeLastName'] ?? null
+            (bool)($data['isCompleted'] ?? false),
+            $data['firstName'] ?? null,
+            $data['lastName'] ?? null
         );
     }
 
-    public function getEmployeeFullName(): ?string
-    {
+    public function getEmployeeFullName(): ?string {
         if ($this->employeeFirstName && $this->employeeLastName) {
             return $this->employeeFirstName . ' ' . $this->employeeLastName;
         }
         return null;
     }
 
-    public function getState(): string
-    {
+    public function getState(): string {
         if ($this->isCompleted) {
             return 'closed';
         } elseif ($this->employeeId) {
@@ -54,5 +52,4 @@ class TaskDto {
         }
     }
 }
-
 ?>

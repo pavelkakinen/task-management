@@ -1,10 +1,11 @@
 <?php
 
+// Autoload classes
 spl_autoload_register(function ($class) {
     $paths = [
-            __DIR__ . '/src/dto/',
-            __DIR__ . '/src/repository/',
-            __DIR__ . '/src/validation/',
+        __DIR__ . '/src/dto/',
+        __DIR__ . '/src/repository/',
+        __DIR__ . '/src/validation/',
     ];
 
     foreach ($paths as $path) {
@@ -16,11 +17,13 @@ spl_autoload_register(function ($class) {
     }
 });
 
+// Load template engine
 require_once __DIR__ . '/vendor/tpl.php';
 
 // Get command parameter
-$command = $_GET['command'] ?? 'employee_list';
+$command = $_GET['command'] ?? 'dashboard';
 
+// Route to appropriate handler
 switch ($command) {
     case 'dashboard':
         handleDashboard();
@@ -43,10 +46,11 @@ switch ($command) {
         break;
 
     default:
-        header('Location: ?command=employee_list');
+        header('Location: ?command=dashboard');
         exit;
 }
 
+// ============= HANDLERS =============
 
 function handleDashboard(): void {
     $employeeRepo = new EmployeeRepository();
@@ -56,8 +60,8 @@ function handleDashboard(): void {
     $tasks = $taskRepo->findAllWithEmployees();
 
     render('dashboard', [
-            'employees' => $employees,
-            'tasks' => $tasks
+        'employees' => $employees,
+        'tasks' => $tasks
     ]);
 }
 
@@ -67,8 +71,8 @@ function handleEmployeeList(): void {
     $success = $_GET['success'] ?? '';
 
     render('employee-list', [
-            'employees' => $employees,
-            'success' => $success
+        'employees' => $employees,
+        'success' => $success
     ]);
 }
 
@@ -78,6 +82,7 @@ function handleEmployeeForm(): void {
     $employee = null;
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        // Handle DELETE
         if (isset($_POST['deleteButton']) && $id) {
             $employeeRepo = new EmployeeRepository();
             $employeeRepo->delete($id);
@@ -85,11 +90,12 @@ function handleEmployeeForm(): void {
             exit;
         }
 
+        // Handle SAVE
         $employee = new EmployeeDto(
-                $id,
-                $_POST['firstName'] ?? '',
-                $_POST['lastName'] ?? '',
-                $_POST['position'] ?? ''
+            $id,
+            $_POST['firstName'] ?? '',
+            $_POST['lastName'] ?? '',
+            $_POST['position'] ?? ''
         );
 
         $error = EmployeeValidator::validate($employee);
@@ -102,6 +108,7 @@ function handleEmployeeForm(): void {
             exit;
         }
     } else {
+        // Load existing employee for edit
         if ($id) {
             $employeeRepo = new EmployeeRepository();
             $employee = $employeeRepo->findById($id);
@@ -111,8 +118,8 @@ function handleEmployeeForm(): void {
     }
 
     render('employee-form', [
-            'employee' => $employee,
-            'error' => $error
+        'employee' => $employee,
+        'error' => $error
     ]);
 }
 
@@ -122,8 +129,8 @@ function handleTaskList(): void {
     $success = $_GET['success'] ?? '';
 
     render('task-list', [
-            'tasks' => $tasks,
-            'success' => $success
+        'tasks' => $tasks,
+        'success' => $success
     ]);
 }
 
@@ -132,10 +139,12 @@ function handleTaskForm(): void {
     $error = '';
     $task = null;
 
+    // Get employees list (always needed for the form)
     $employeeRepo = new EmployeeRepository();
     $employees = $employeeRepo->findAll();
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        // Handle DELETE
         if (isset($_POST['deleteButton']) && $id) {
             $taskRepo = new TaskRepository();
             $taskRepo->delete($id);
@@ -143,12 +152,16 @@ function handleTaskForm(): void {
             exit;
         }
 
+        // Handle SAVE
         $task = new TaskDto(
-                $id,
-                $_POST['description'] ?? '',
-                !empty($_POST['employeeId']) ? (int)$_POST['employeeId'] : null,
-                isset($_POST['isCompleted'])
+            $id,
+            $_POST['description'] ?? '',
+            !empty($_POST['employeeId']) ? (int)$_POST['employeeId'] : null,
+            isset($_POST['isCompleted'])
         );
+
+        // Note: We intentionally ignore 'estimate' and any other unknown POST fields
+        // This is for security - only accept known fields;
 
         $error = TaskValidator::validate($task);
 
@@ -160,6 +173,7 @@ function handleTaskForm(): void {
             exit;
         }
     } else {
+        // Load existing task for edit
         if ($id) {
             $taskRepo = new TaskRepository();
             $task = $taskRepo->findById($id);
@@ -169,9 +183,9 @@ function handleTaskForm(): void {
     }
 
     render('task-form', [
-            'task' => $task,
-            'employees' => $employees,
-            'error' => $error
+        'task' => $task,
+        'employees' => $employees,
+        'error' => $error
     ]);
 }
 ?>
