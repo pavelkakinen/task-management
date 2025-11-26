@@ -1,0 +1,20 @@
+
+.flex-container {
+    display: flex;
+    flex-wrap: wrap;
+
+    height: 10rem;
+    border: 1px solid olive;
+    padding: .2rem;
+    border-radius: .2rem;
+
+    justify-content: space-between;
+    row-gap: .5rem;
+}
+
+.flex-container > div {
+    width: 6rem;
+    border: 1px solid olive;
+    border-radius: .2rem;
+    padding: .2rem;
+}

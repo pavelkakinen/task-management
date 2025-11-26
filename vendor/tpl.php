@@ -1,28 +1,16 @@
 <?php
+require_once __DIR__ . '/autoload.php';
+
+use Latte\Engine;
 
 function render(string $template, array $data = []): void {
-    $templatePath = __DIR__ . '/../templates/' . $template . '.tpl.html';
+    static $latte = null;
 
-    if (!file_exists($templatePath)) {
-        throw new Exception("Template not found: $template");
+    if ($latte === null) {
+        $latte = new Engine;
+        $latte->setTempDirectory(__DIR__ . '/../temp');
     }
 
-    extract($data);
-
-    ob_start();
-
-    include $templatePath;
-
-    $content = ob_get_clean();
-
-    echo $content;
+    $templatePath = __DIR__ . '/../templates/' . $template . '.latte';
+    $latte->render($templatePath, $data);
 }
-
-function escape(string $value): string {
-    return htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
-}
-
-function e(string $value): string {
-    return escape($value);
-}
-?>
