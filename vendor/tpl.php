@@ -1,7 +1,7 @@
 <?php
 
 function render(string $template, array $data = []): void {
-    $templatePath = __DIR__ . '/../templates/' . $template . '.tpl.php';
+    $templatePath = __DIR__ . '/../templates/' . $template . '.tpl.html';
 
     if (!file_exists($templatePath)) {
         throw new Exception("Template not found: $template");
