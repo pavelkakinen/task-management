@@ -273,9 +273,6 @@ function handleTaskForm(): void {
     $error = '';
     $task = null;
 
-    $employeeRepo = new EmployeeRepository();
-    $employees = $employeeRepo->findAll();
-
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (isset($_POST['deleteButton']) && $id) {
             $taskRepo = new TaskRepository();
@@ -309,10 +306,67 @@ function handleTaskForm(): void {
         }
     }
 
+    $errorMessage = '';
+    if ($error) {
+        $errorMessage = '<div id="error-block" class="error">' . htmlspecialchars($error) . '</div>';
+    }
+    $pageTitle = $id ? 'Edit Task' : 'Add Task';
+
+    $employeeRepo = new EmployeeRepository();
+    $employees = $employeeRepo->findAll();
+
+    $formHtml = '<form method="POST">';
+    $formHtml .= '<div>';
+    $formHtml .= '<label for="description">Description:</label>';
+    $formHtml .= '<textarea id="description" name="description">';
+    $formHtml .= htmlspecialchars($task->description);
+    $formHtml .= '</textarea>';
+    $formHtml .= '</div>';
+    $formHtml .= '<div>';
+    $formHtml .= '<label for="estimate">Estimate:</label>';
+    $formHtml .= '<input type="hidden" id="estimate" name="estimate" value="">';
+    $formHtml .= '</div>';
+    $formHtml .= '<div>';
+    $formHtml .= '<label for="employeeId">Assign to Employee</label>';
+    $formHtml .= '<select id="employeeId" name="employeeId">';
+    $formHtml .= '<option value="">--- Not assigned ---</option>';
+    foreach ($employees as $employee) {
+        $selected = $employee->id === $task->employeeId ? ' selected' : '';
+        $formHtml .= '<option value="' . $employee->id . '"' . $selected . '>';
+        $formHtml .= htmlspecialchars($employee->getFullName());
+        $formHtml .= '</option>';
+    }
+    $formHtml .= '</select>';
+    $formHtml .= '</div>';
+    $formHtml .= '<div>';
+    $formHtml .= '<label for="isCompleted">';
+    $formHtml .= '<input type="checkbox" id="isCompleted" name="isCompleted" ';
+    if ($task->isCompleted) {
+        $formHtml .= 'checked';
+    }
+    $formHtml .= '>';
+    $formHtml .= 'Task Completed';
+    $formHtml .= '</label>';
+    $formHtml .= '</div>';
+    $formHtml .= '<div>';
+    $formHtml .= '<button name="submitButton" id="submitButton" type="submit">';
+    $formHtml .= $id ? 'Update Task' : 'Add Task';
+    $formHtml .= '</button>';
+
+    if ($id) {
+        $formHtml .= ' <button type="submit" name="deleteButton" id="deleteButton" class="delete">';
+        $formHtml .= 'Delete Task';
+        $formHtml .= '</button>';
+    }
+    $formHtml .= '</div>';
+    $formHtml .= '</form>';
+
+
+
     render('task-form', [
-        'task' => $task,
-        'employees' => $employees,
-        'error' => $error
+        'pageTitle' => $pageTitle,
+        'formHtml' => $formHtml,
+        'errorMessage' => $errorMessage
     ]);
 }
 ?>
