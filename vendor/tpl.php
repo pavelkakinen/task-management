@@ -8,7 +8,7 @@ function render(string $template, array $data = []): void {
 
     if ($latte === null) {
         $latte = new Engine;
-        $latte->setTempDirectory(__DIR__ . '/../temp');
+        $latte->setTempDirectory('/tmp/latte-icd0007');  // ← Системная папка!
     }
 
     $templatePath = __DIR__ . '/../templates/' . $template . '.latte';
