@@ -369,4 +369,3 @@ function handleTaskForm(): void {
         'errorMessage' => $errorMessage
     ]);
 }
-?>
