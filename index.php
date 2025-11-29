@@ -56,35 +56,35 @@ function handleDashboard(): void {
 
     $employeesHtml = '';
     if (empty($employees)) {
-        $employeesHtml = '<p>No employees found.</p>';
+        $employeesHtml = '<' . 'p>No employees found.<' . '/p>';
     } else {
         foreach ($employees as $employee) {
-            $employeesHtml .= '<div class="employee-item">';
-            $employeesHtml .= '<span class="name">' . htmlspecialchars($employee->getFullName()) . '</span>';
-            $employeesHtml .= '<br><span class="position">' . htmlspecialchars($employee->position) . '</span>';
-            $employeesHtml .= '<br><span class="task-count">Tasks: <span id="employee-task-count-' . $employee->id . '">' . $employee->taskCount . '</span></span>';
-            $employeesHtml .= '</div>';
+            $employeesHtml .= '<' . 'div class="employee-item">';
+            $employeesHtml .= '<' . 'span class="name">' . htmlspecialchars($employee->getFullName()) . '<' . '/span>';
+            $employeesHtml .= '<' . 'br><' . 'span class="position">' . htmlspecialchars($employee->position) . '<' . '/span>';
+            $employeesHtml .= '<' . 'br><' . 'span class="task-count">Tasks: <' . 'span id="employee-task-count-' . $employee->id . '">' . $employee->taskCount . '<' . '/span><' . '/span>';
+            $employeesHtml .= '<' . '/div>';
         }
     }
 
     $tasksHtml = '';
     if (empty($tasks)) {
-        $tasksHtml = '<p>No tasks found.</p>';
+        $tasksHtml = '<' . 'p>No tasks found.<' . '/p>';
     } else {
         foreach ($tasks as $task) {
-            $tasksHtml .= '<div class="task">';
-            $tasksHtml .= '<div class="title">';
-            $tasksHtml .= '<div>' . htmlspecialchars($task->description) . '</div>';
+            $tasksHtml .= '<' . 'div class="task">';
+            $tasksHtml .= '<' . 'div class="title">';
+            $tasksHtml .= '<' . 'div>' . htmlspecialchars($task->description) . '<' . '/div>';
 
             if ($task->employeeId) {
-                $tasksHtml .= '<small>Assigned to: ' . htmlspecialchars($task->getEmployeeFullName()) . '</small>';
+                $tasksHtml .= '<' . 'small>Assigned to: ' . htmlspecialchars($task->getEmployeeFullName()) . '<' . '/small>';
             }
 
-            $tasksHtml .= '<div><strong>State: <span id="task-state-' . $task->id . '">';
+            $tasksHtml .= '<' . 'div><' . 'strong>State: <' . 'span id="task-state-' . $task->id . '">';
             $tasksHtml .= $task->getState();
-            $tasksHtml .= '</span></strong></div>';
-            $tasksHtml .= '</div>';
-            $tasksHtml .= '</div>';
+            $tasksHtml .= '<' . '/span><' . '/strong><' . '/div>';
+            $tasksHtml .= '<' . '/div>';
+            $tasksHtml .= '<' . '/div>';
         }
     }
 
@@ -101,28 +101,28 @@ function handleEmployeeList(): void {
 
     $successMessage = '';
     if ($success) {
-        $successMessage = '<div id="message-block" class="success">' . htmlspecialchars($success) . '</div>';
+        $successMessage = '<' . 'div id="message-block" class="success">' . htmlspecialchars($success) . '<' . '/div>';
     }
 
-    $employeeListHtml = '<h2>Employees (' . count($employees) . ')</h2>';
+    $employeeListHtml = '<' . 'h2>Employees (' . count($employees) . ')<' . '/h2>';
 
     if (count($employees) === 0) {
-        $employeeListHtml .= '<p>No employees found.</p>';
+        $employeeListHtml .= '<' . 'p>No employees found.<' . '/p>';
     } else {
-        $employeeListHtml .= '<ul class="employee-list">';
+        $employeeListHtml .= '<' . 'ul class="employee-list">';
 
         foreach ($employees as $employee) {
-            $employeeListHtml .= '<li>';
-            $employeeListHtml .= '<div data-employee-id="' . $employee->id . '">';
+            $employeeListHtml .= '<' . 'li>';
+            $employeeListHtml .= '<' . 'div data-employee-id="' . $employee->id . '">';
             $employeeListHtml .= htmlspecialchars($employee->getFullName());
-            $employeeListHtml .= '</div>';
+            $employeeListHtml .= '<' . '/div>';
             $employeeListHtml .= ' - ' . htmlspecialchars($employee->position);
-            $employeeListHtml .= ' <a href="?command=employee_form&id=' . $employee->id . '" ';
-            $employeeListHtml .= 'id="employee-edit-link-' . $employee->id . '" class="edit-link">Edit</a>';
-            $employeeListHtml .= '</li>';
+            $employeeListHtml .= ' <' . 'a href="?command=employee_form&id=' . $employee->id . '" ';
+            $employeeListHtml .= 'id="employee-edit-link-' . $employee->id . '" class="edit-link">Edit<' . '/a>';
+            $employeeListHtml .= '<' . '/li>';
         }
 
-        $employeeListHtml .= '</ul>';
+        $employeeListHtml .= '<' . '/ul>';
     }
 
     render('employee-list', [
@@ -137,7 +137,6 @@ function handleEmployeeForm(): void {
     $employee = null;
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        // Handle DELETE
         if (isset($_POST['deleteButton']) && $id) {
             $employeeRepo = new EmployeeRepository();
             $employeeRepo->delete($id);
@@ -145,7 +144,6 @@ function handleEmployeeForm(): void {
             exit;
         }
 
-        // Handle SAVE
         $employee = new EmployeeDto(
             $id,
             $_POST['firstName'] ?? '',
@@ -173,47 +171,47 @@ function handleEmployeeForm(): void {
 
     $errorMessage = '';
     if ($error) {
-        $errorMessage = '<div id="error-block" class="error">' . htmlspecialchars($error) . '</div>';
+        $errorMessage = '<' . 'div id="error-block" class="error">' . htmlspecialchars($error) . '<' . '/div>';
     }
 
-    $formHtml = '<form method="POST">';
+    $formHtml = '<' . 'form method="POST">';
 
-    $formHtml .= '<div>';
-    $formHtml .= '<label for="firstName">First Name:</label>';
-    $formHtml .= '<input type="text" id="firstName" name="firstName" ';
+    $formHtml .= '<' . 'div>';
+    $formHtml .= '<' . 'label for="firstName">First Name:<' . '/label>';
+    $formHtml .= '<' . 'input type="text" id="firstName" name="firstName" ';
     $formHtml .= 'value="' . htmlspecialchars($employee->firstName) . '" required>';
-    $formHtml .= '</div>';
+    $formHtml .= '<' . '/div>';
 
-    $formHtml .= '<div>';
-    $formHtml .= '<label for="lastName">Last Name:</label>';
-    $formHtml .= '<input type="text" id="lastName" name="lastName" ';
+    $formHtml .= '<' . 'div>';
+    $formHtml .= '<' . 'label for="lastName">Last Name:<' . '/label>';
+    $formHtml .= '<' . 'input type="text" id="lastName" name="lastName" ';
     $formHtml .= 'value="' . htmlspecialchars($employee->lastName) . '" required>';
-    $formHtml .= '</div>';
+    $formHtml .= '<' . '/div>';
 
-    $formHtml .= '<div>';
-    $formHtml .= '<label for="position">Position:</label>';
-    $formHtml .= '<input type="text" id="position" name="position" ';
+    $formHtml .= '<' . 'div>';
+    $formHtml .= '<' . 'label for="position">Position:<' . '/label>';
+    $formHtml .= '<' . 'input type="text" id="position" name="position" ';
     $formHtml .= 'value="' . htmlspecialchars($employee->position) . '">';
-    $formHtml .= '</div>';
+    $formHtml .= '<' . '/div>';
 
-    $formHtml .= '<div>';
-    $formHtml .= '<label for="picture">Picture:</label>';
-    $formHtml .= '<input type="file" id="picture" name="picture" accept="image/*">';
-    $formHtml .= '</div>';
+    $formHtml .= '<' . 'div>';
+    $formHtml .= '<' . 'label for="picture">Picture:<' . '/label>';
+    $formHtml .= '<' . 'input type="file" id="picture" name="picture" accept="image/*">';
+    $formHtml .= '<' . '/div>';
 
-    $formHtml .= '<div>';
-    $formHtml .= '<button name="submitButton" id="submitButton" type="submit">';
+    $formHtml .= '<' . 'div>';
+    $formHtml .= '<' . 'button name="submitButton" id="submitButton" type="submit">';
     $formHtml .= $id ? 'Update Employee' : 'Add Employee';
-    $formHtml .= '</button>';
+    $formHtml .= '<' . '/button>';
 
     if ($id) {
-        $formHtml .= ' <button type="submit" name="deleteButton" id="deleteButton" class="delete">';
+        $formHtml .= ' <' . 'button type="submit" name="deleteButton" id="deleteButton" class="delete">';
         $formHtml .= 'Delete Employee';
-        $formHtml .= '</button>';
+        $formHtml .= '<' . '/button>';
     }
 
-    $formHtml .= '</div>';
-    $formHtml .= '</form>';
+    $formHtml .= '<' . '/div>';
+    $formHtml .= '<' . '/form>';
 
     render('employee-form', [
         'pageTitle' => $id ? 'Edit Employee' : 'Add Employee',
@@ -229,37 +227,37 @@ function handleTaskList(): void {
 
     $successMessage = '';
     if ($success) {
-        $successMessage = '<div id="message-block" class="success">' . htmlspecialchars($success) . '</div>';
+        $successMessage = '<' . 'div id="message-block" class="success">' . htmlspecialchars($success) . '<' . '/div>';
     }
 
-    $taskListHtml = '<h2>Tasks (' . count($tasks) . ')</h2>';
+    $taskListHtml = '<' . 'h2>Tasks (' . count($tasks) . ')<' . '/h2>';
 
     if (empty($tasks)) {
-        $taskListHtml .= '<p>No tasks found.</p>';
+        $taskListHtml .= '<' . 'p>No tasks found.<' . '/p>';
     } else {
-        $taskListHtml .= '<ul class="task-list">';
+        $taskListHtml .= '<' . 'ul class="task-list">';
 
         foreach ($tasks as $task) {
-            $taskListHtml .= '<li>';
-            $taskListHtml .= '<div>';
-            $taskListHtml .= '<div data-task-id="' . $task->id . '">';
+            $taskListHtml .= '<' . 'li>';
+            $taskListHtml .= '<' . 'div>';
+            $taskListHtml .= '<' . 'div data-task-id="' . $task->id . '">';
             $taskListHtml .= htmlspecialchars($task->description);
-            $taskListHtml .= '</div>';
+            $taskListHtml .= '<' . '/div>';
 
             if ($task->employeeId) {
-                $taskListHtml .= '<small>Assigned to: ' . htmlspecialchars($task->getEmployeeFullName()) . '</small>';
+                $taskListHtml .= '<' . 'small>Assigned to: ' . htmlspecialchars($task->getEmployeeFullName()) . '<' . '/small>';
             } else {
-                $taskListHtml .= '<small>Not assigned</small>';
+                $taskListHtml .= '<' . 'small>Not assigned<' . '/small>';
             }
 
-            $taskListHtml .= '<small>Status: <span id="task-state-' . $task->id . '">' . $task->getState() . '</span></small>';
-            $taskListHtml .= '</div>';
-            $taskListHtml .= '<a href="?command=task_form&id=' . $task->id . '" ';
-            $taskListHtml .= 'id="task-edit-link-' . $task->id . '" class="edit-link">Edit</a>';
-            $taskListHtml .= '</li>';
+            $taskListHtml .= '<' . 'small>Status: <' . 'span id="task-state-' . $task->id . '">' . $task->getState() . '<' . '/span><' . '/small>';
+            $taskListHtml .= '<' . '/div>';
+            $taskListHtml .= '<' . 'a href="?command=task_form&id=' . $task->id . '" ';
+            $taskListHtml .= 'id="task-edit-link-' . $task->id . '" class="edit-link">Edit<' . '/a>';
+            $taskListHtml .= '<' . '/li>';
         }
 
-        $taskListHtml .= '</ul>';
+        $taskListHtml .= '<' . '/ul>';
     }
 
     render('task-list', [
@@ -308,60 +306,58 @@ function handleTaskForm(): void {
 
     $errorMessage = '';
     if ($error) {
-        $errorMessage = '<div id="error-block" class="error">' . htmlspecialchars($error) . '</div>';
+        $errorMessage = '<' . 'div id="error-block" class="error">' . htmlspecialchars($error) . '<' . '/div>';
     }
     $pageTitle = $id ? 'Edit Task' : 'Add Task';
 
     $employeeRepo = new EmployeeRepository();
     $employees = $employeeRepo->findAll();
 
-    $formHtml = '<form method="POST">';
-    $formHtml .= '<div>';
-    $formHtml .= '<label for="description">Description:</label>';
-    $formHtml .= '<textarea id="description" name="description">';
+    $formHtml = '<' . 'form method="POST">';
+    $formHtml .= '<' . 'div>';
+    $formHtml .= '<' . 'label for="description">Description:<' . '/label>';
+    $formHtml .= '<' . 'textarea id="description" name="description">';
     $formHtml .= htmlspecialchars($task->description);
-    $formHtml .= '</textarea>';
-    $formHtml .= '</div>';
-    $formHtml .= '<div>';
-    $formHtml .= '<label for="estimate">Estimate:</label>';
-    $formHtml .= '<input type="hidden" id="estimate" name="estimate" value="">';
-    $formHtml .= '</div>';
-    $formHtml .= '<div>';
-    $formHtml .= '<label for="employeeId">Assign to Employee</label>';
-    $formHtml .= '<select id="employeeId" name="employeeId">';
-    $formHtml .= '<option value="">--- Not assigned ---</option>';
+    $formHtml .= '<' . '/textarea>';
+    $formHtml .= '<' . '/div>';
+    $formHtml .= '<' . 'div>';
+    $formHtml .= '<' . 'label for="estimate">Estimate:<' . '/label>';
+    $formHtml .= '<' . 'input type="hidden" id="estimate" name="estimate" value="">';
+    $formHtml .= '<' . '/div>';
+    $formHtml .= '<' . 'div>';
+    $formHtml .= '<' . 'label for="employeeId">Assign to Employee<' . '/label>';
+    $formHtml .= '<' . 'select id="employeeId" name="employeeId">';
+    $formHtml .= '<' . 'option value="">--- Not assigned ---<' . '/option>';
     foreach ($employees as $employee) {
         $selected = $employee->id === $task->employeeId ? ' selected' : '';
-        $formHtml .= '<option value="' . $employee->id . '"' . $selected . '>';
+        $formHtml .= '<' . 'option value="' . $employee->id . '"' . $selected . '>';
         $formHtml .= htmlspecialchars($employee->getFullName());
-        $formHtml .= '</option>';
+        $formHtml .= '<' . '/option>';
     }
-    $formHtml .= '</select>';
-    $formHtml .= '</div>';
-    $formHtml .= '<div>';
-    $formHtml .= '<label for="isCompleted">';
-    $formHtml .= '<input type="checkbox" id="isCompleted" name="isCompleted" ';
+    $formHtml .= '<' . '/select>';
+    $formHtml .= '<' . '/div>';
+    $formHtml .= '<' . 'div>';
+    $formHtml .= '<' . 'label for="isCompleted">';
+    $formHtml .= '<' . 'input type="checkbox" id="isCompleted" name="isCompleted" ';
     if ($task->isCompleted) {
         $formHtml .= 'checked';
     }
     $formHtml .= '>';
     $formHtml .= 'Task Completed';
-    $formHtml .= '</label>';
-    $formHtml .= '</div>';
-    $formHtml .= '<div>';
-    $formHtml .= '<button name="submitButton" id="submitButton" type="submit">';
+    $formHtml .= '<' . '/label>';
+    $formHtml .= '<' . '/div>';
+    $formHtml .= '<' . 'div>';
+    $formHtml .= '<' . 'button name="submitButton" id="submitButton" type="submit">';
     $formHtml .= $id ? 'Update Task' : 'Add Task';
-    $formHtml .= '</button>';
+    $formHtml .= '<' . '/button>';
 
     if ($id) {
-        $formHtml .= ' <button type="submit" name="deleteButton" id="deleteButton" class="delete">';
+        $formHtml .= ' <' . 'button type="submit" name="deleteButton" id="deleteButton" class="delete">';
         $formHtml .= 'Delete Task';
-        $formHtml .= '</button>';
+        $formHtml .= '<' . '/button>';
     }
-    $formHtml .= '</div>';
-    $formHtml .= '</form>';
-
-
+    $formHtml .= '<' . '/div>';
+    $formHtml .= '<' . '/form>';
 
     render('task-form', [
         'pageTitle' => $pageTitle,
