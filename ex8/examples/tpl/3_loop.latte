@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Loop</title>
+</head>
+<body>
+
+<ul>
+    <li n:foreach="$items as $item">
+        {$item}
+    </li>
+</ul>
+
+
+<div n:inner-foreach="$errors as $error" class="errors">
+    {$error} <br />
+</div>
+
+
+{foreach range(1, 2) as $nr}
+    <div class="name">Name {$nr}</div>
+    <div class="position">Position {$nr}</div>
+
+{/foreach}
+
+
+<div n:inner-foreach="$errors as $error" class="errors">
+    {$error} {if !$iterator->last}<br />{/if}
+</div>
+
+
+</body>
+</html>
