@@ -1,0 +1,19 @@
+# Configuration (contains credentials)
+config.php
+
+# macOS
+.DS_Store
+
+# IDE
+.idea/
+
+# Temporary files
+/tmp/
+*.log
+
+# Latte cache
+/latte-cache/
+
+# Uploaded files (keep directory)
+/uploads/*
+!/uploads/.gitkeep

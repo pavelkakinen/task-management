@@ -1,0 +1,296 @@
+================================================================================
+                         IMPLEMENTATION PLAN
+                    Employee Management System
+================================================================================
+
+This document outlines all improvements needed to make this project production-ready.
+
+================================================================================
+PRIORITY 1: CRITICAL SECURITY FIXES
+================================================================================
+
+1.1 REMOVE HARDCODED DATABASE CREDENTIALS
+    File: src/repository/Database.php (lines 7-10)
+
+    Current (INSECURE):
+        private const DB_HOST = 'db.mkalmo.eu';
+        private const DB_NAME = 'pavelkakinen';
+        private const DB_USER = 'pavelkakinen';
+        private const DB_PASS = 'e0c8bf71';
+
+    Solution:
+        - Create config.php file (add to .gitignore)
+        - Or use environment variables via getenv()
+        - Or use .env file with vlucas/phpdotenv
+
+1.2 RESTRICT CORS ORIGINS
+    File: api/employees.php (line 3)
+
+    Current (INSECURE):
+        header('Access-Control-Allow-Origin: *');
+
+    Solution:
+        - Specify exact allowed origin(s)
+        - Or validate against whitelist
+
+================================================================================
+PRIORITY 2: MISSING FUNCTIONALITY
+================================================================================
+
+2.1 IMPLEMENT TASKS API
+    File: api/tasks.php (was deleted - needs recreation)
+
+    Required endpoints:
+        GET    /api/tasks.php         - List all tasks
+        GET    /api/tasks.php?id=X    - Get single task
+        POST   /api/tasks.php         - Create/update task
+        DELETE /api/tasks.php         - Delete task
+
+    Use TaskRepository and TaskValidator (already exist)
+
+2.2 ADD TASK ROUTES TO FRONTEND
+    File: app.js
+
+    Missing routes to add:
+        #/tasks           -> showTaskList()
+        #/tasks/new       -> showTaskForm()
+        #/tasks/edit/:id  -> showTaskForm(id)
+
+    Functions to implement:
+        - showTaskList()
+        - renderTaskList(tasks)
+        - showTaskForm(id)
+        - renderTaskForm(task)
+        - saveTask(id)
+        - deleteTask(id)
+
+2.3 ADD 404 HANDLING
+    File: api/employees.php
+
+    When findById() returns null, respond with:
+        http_response_code(404);
+        echo json_encode(['error' => 'Employee not found']);
+
+================================================================================
+PRIORITY 3: CODE CLEANUP
+================================================================================
+
+3.1 REMOVE UNUSED CODE
+
+    Database.php:
+        - Remove markConnectionNeeded() method (line 14-16)
+        - Remove $connectionNeeded property (line 5)
+
+    EmployeeRepository.php:
+        - Remove findAllWithTaskCount() if not needed (lines 25-40)
+        - Or use it in dashboard to show task counts
+
+    TaskRepository.php:
+        - Remove findAllWithEmployees() if not needed (lines 25-39)
+        - Or use it in task list to show assigned employee
+
+    EmployeeDto.php:
+        - Remove getFullName() if not used (lines 34-36)
+        - Or use it in templates/frontend
+
+    TaskDto.php:
+        - Remove getEmployeeFullName() if not used (lines 38-43)
+        - Remove getState() if not used (lines 45-53)
+        - Or use them in frontend
+
+3.2 DECIDE ON ARCHITECTURE
+
+    Current state: TWO conflicting approaches exist
+
+    Option A - Keep SPA (Recommended):
+        - Delete templates/*.latte (5 files)
+        - Delete vendor/tpl.php
+        - Keep vendor/latte/ only if needed elsewhere
+        - All rendering happens in app.js
+
+    Option B - Switch to Server-Rendered:
+        - Create index.php as router/controller
+        - Use templates/*.latte for views
+        - Delete or repurpose app.js
+        - Change template links from ?command= to match router
+
+3.3 FIX CSS SELECTORS
+    File: style.css
+
+    Issues:
+        - References #root but index.html uses #app
+        - #dash-layout defined twice (lines 78-82 and 320-324)
+        - Page-specific IDs (#dashboard-page etc.) not used in SPA
+
+    Solutions:
+        - Change #root to #app, or
+        - Add id="root" wrapper in index.html
+        - Remove duplicate #dash-layout
+        - Remove unused page-specific styles
+
+================================================================================
+PRIORITY 4: CODE QUALITY IMPROVEMENTS
+================================================================================
+
+4.1 ADD PHP NAMESPACES
+
+    Suggested structure:
+        namespace App\Dto;        -> EmployeeDto, TaskDto
+        namespace App\Repository; -> Database, EmployeeRepository, TaskRepository
+        namespace App\Validation; -> EmployeeValidator, TaskValidator
+
+    Update require_once statements or use Composer autoloader
+
+4.2 FIX ERROR HANDLING
+    File: src/repository/Database.php (line 35)
+
+    Current (BAD):
+        die("Database connection failed: " . $e->getMessage());
+
+    Better:
+        throw new RuntimeException("Database connection failed", 0, $e);
+
+    Then handle in API files with try-catch
+
+4.3 FIX UTF-8 VALIDATION
+    Files: src/validation/EmployeeValidator.php, TaskValidator.php
+
+    Current (WRONG for UTF-8):
+        strlen($firstName)
+
+    Correct:
+        mb_strlen($firstName, 'UTF-8')
+
+4.4 CONSISTENT CODE LANGUAGE
+    File: api/employees.php (lines 22, 26)
+
+    Remove Russian comments, use English:
+        // Получить одного сотрудника -> // Get single employee
+        // Получить всех -> // Get all employees
+
+================================================================================
+PRIORITY 5: SECURITY ENHANCEMENTS
+================================================================================
+
+5.1 ADD CSRF PROTECTION
+
+    For forms:
+        - Generate token: $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+        - Include in forms: <input type="hidden" name="csrf_token" value="...">
+        - Validate on POST/DELETE
+
+    For SPA:
+        - Send token in response header or meta tag
+        - Include in fetch requests as header
+
+5.2 ADD BASIC AUTHENTICATION
+
+    Options:
+        - Session-based login
+        - JWT tokens
+        - HTTP Basic Auth (simple but less secure)
+
+    Protect:
+        - POST /api/employees.php
+        - DELETE /api/employees.php
+        - All /api/tasks.php mutations
+
+5.3 ADD INPUT SANITIZATION
+
+    Current validation only checks length.
+    Add:
+        - Trim whitespace (already done)
+        - Remove/escape dangerous characters
+        - Validate position field (currently no validation)
+
+================================================================================
+PRIORITY 6: PROJECT SETUP
+================================================================================
+
+6.1 CREATE .gitignore
+
+    Add file with:
+        .DS_Store
+        .idea/
+        config.php
+        .env
+        /tmp/
+        *.log
+
+6.2 ADD COMPOSER SUPPORT (Optional)
+
+    Create composer.json:
+        - Autoloading for src/ classes
+        - Dependencies: latte/latte
+        - Dev dependencies: phpunit for testing
+
+6.3 ADD README
+
+    Include:
+        - Project description
+        - Setup instructions
+        - Database setup (run setup.sql)
+        - Configuration (copy config.example.php)
+        - API documentation
+
+================================================================================
+IMPLEMENTATION ORDER
+================================================================================
+
+Phase 1 - Critical Fixes:
+    [x] 1.1 Move credentials to config file
+    [x] 1.2 Restrict CORS
+    [x] 4.3 Fix UTF-8 validation (mb_strlen)
+
+Phase 2 - Complete Features:
+    [x] 2.1 Implement tasks API
+    [x] 2.2 Add task routes to frontend
+    [x] 2.3 Add 404 handling
+
+Phase 3 - Cleanup:
+    [x] 3.1 Remove unused code
+    [x] 3.2 Choose and implement single architecture (SPA)
+    [x] 3.3 Fix CSS issues
+    [x] 4.4 Translate Russian comments
+
+Phase 4 - Quality:
+    [x] 4.1 Add namespaces
+    [x] 4.2 Fix error handling
+    [x] 6.1 Create .gitignore (done in Phase 1)
+
+Phase 5 - Security (if deploying to production):
+    [x] 5.1 Add CSRF protection
+    [x] 5.2 Add authentication
+    [x] 5.3 Enhanced input validation
+
+================================================================================
+FILES SUMMARY
+================================================================================
+
+Files to modify:
+    - src/repository/Database.php (credentials, error handling, remove unused)
+    - src/repository/EmployeeRepository.php (remove unused or use it)
+    - src/repository/TaskRepository.php (remove unused or use it)
+    - src/dto/EmployeeDto.php (remove unused or use it)
+    - src/dto/TaskDto.php (remove unused or use it)
+    - src/validation/EmployeeValidator.php (mb_strlen)
+    - src/validation/TaskValidator.php (mb_strlen)
+    - api/employees.php (CORS, 404, comments)
+    - app.js (add task routes)
+    - style.css (fix selectors, remove duplicates)
+    - index.html (possibly add #root wrapper)
+
+Files to create:
+    - api/tasks.php (full implementation)
+    - config.php (database credentials)
+    - .gitignore
+
+Files to possibly delete (if choosing SPA approach):
+    - templates/dashboard.latte
+    - templates/employee-form.latte
+    - templates/employee-list.latte
+    - templates/task-form.latte
+    - templates/task-list.latte
+    - vendor/tpl.php
+
+================================================================================

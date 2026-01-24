@@ -1,13 +1,14 @@
 <?php
 
-require_once __DIR__ . '/Database.php';
-require_once __DIR__ . '/../dto/TaskDto.php';
+namespace App\Repository;
+
+use App\Dto\TaskDto;
+use PDO;
 
 class TaskRepository {
     private PDO $pdo;
 
     public function __construct() {
-        Database::markConnectionNeeded();
         $this->pdo = Database::getConnection();
     }
 
@@ -23,9 +24,9 @@ class TaskRepository {
     }
 
     public function findAllWithEmployees(): array {
-        $sql = "SELECT t.*, e.firstName, e.lastName 
-                FROM tasks t 
-                LEFT JOIN employees e ON t.employeeId = e.id 
+        $sql = "SELECT t.*, e.firstName, e.lastName
+                FROM tasks t
+                LEFT JOIN employees e ON t.employeeId = e.id
                 ORDER BY t.id";
 
         $stmt = $this->pdo->query($sql);
@@ -74,5 +75,17 @@ class TaskRepository {
     public function delete(int $id): void {
         $stmt = $this->pdo->prepare("DELETE FROM tasks WHERE id = ?");
         $stmt->execute([$id]);
+    }
+
+    public function findByEmployeeId(int $employeeId): array {
+        $stmt = $this->pdo->prepare("SELECT * FROM tasks WHERE employeeId = ? ORDER BY isCompleted, id");
+        $stmt->execute([$employeeId]);
+        $tasks = [];
+
+        foreach ($stmt->fetchAll() as $row) {
+            $tasks[] = TaskDto::fromArray($row);
+        }
+
+        return $tasks;
     }
 }

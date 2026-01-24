@@ -3,10 +3,9 @@
 require_once __DIR__ . '/../src/autoload.php';
 
 use App\Repository\Database;
-use App\Repository\TaskRepository;
-use App\Repository\EmployeeRepository;
-use App\Dto\TaskDto;
-use App\Validation\TaskValidator;
+use App\Repository\PositionRepository;
+use App\Dto\PositionDto;
+use App\Validation\PositionValidator;
 use App\Security\Auth;
 use App\Security\CsrfToken;
 use App\Security\InputSanitizer;
@@ -45,11 +44,9 @@ function checkMutationAllowed(): void {
 
     $requireAuth = $config['auth']['require_auth'] ?? false;
 
-    // Check authentication if required
     if ($requireAuth) {
         Auth::requireAuth();
 
-        // Validate CSRF token only when auth is required
         if (!CsrfToken::validateFromHeader()) {
             http_response_code(403);
             echo json_encode(['error' => 'Invalid or missing CSRF token']);
@@ -59,10 +56,9 @@ function checkMutationAllowed(): void {
 }
 
 try {
-    $taskRepo = new TaskRepository();
-    $employeeRepo = new EmployeeRepository();
+    $repo = new PositionRepository();
 
-    // GET - Retrieve tasks (no auth required)
+    // GET - Retrieve positions
     if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         if (isset($_GET['id'])) {
             $id = InputSanitizer::sanitizeId($_GET['id']);
@@ -72,47 +68,42 @@ try {
                 exit;
             }
 
-            $task = $taskRepo->findById($id);
-            if ($task === null) {
+            $position = $repo->findById($id);
+            if ($position === null) {
                 http_response_code(404);
-                echo json_encode(['error' => 'Task not found']);
+                echo json_encode(['error' => 'Position not found']);
             } else {
-                echo json_encode($task);
+                echo json_encode($position);
             }
-        } elseif (isset($_GET['employees'])) {
-            $employees = $employeeRepo->findAll();
-            echo json_encode($employees);
         } else {
-            $tasks = $taskRepo->findAllWithEmployees();
-            echo json_encode($tasks);
+            $positions = $repo->findAll();
+            echo json_encode($positions);
         }
     }
 
-    // POST - Create or update task
+    // POST - Create or update position
     elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
         checkMutationAllowed();
 
         $data = json_decode(file_get_contents('php://input'), true);
 
-        $task = new TaskDto(
+        $position = new PositionDto(
             InputSanitizer::sanitizeId($data['id'] ?? null),
-            InputSanitizer::sanitizeDescription($data['description'] ?? ''),
-            InputSanitizer::sanitizeId($data['employeeId'] ?? null),
-            (bool)($data['isCompleted'] ?? false)
+            InputSanitizer::sanitizePosition($data['title'] ?? '')
         );
 
-        $error = TaskValidator::validate($task);
+        $error = PositionValidator::validate($position);
 
         if ($error) {
             http_response_code(400);
             echo json_encode(['error' => $error]);
         } else {
-            $id = $taskRepo->save($task);
+            $id = $repo->save($position);
             echo json_encode(['id' => $id, 'success' => true]);
         }
     }
 
-    // DELETE - Remove task
+    // DELETE - Remove position
     elseif ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
         checkMutationAllowed();
 
@@ -120,8 +111,13 @@ try {
         $id = InputSanitizer::sanitizeId($data['id'] ?? null);
 
         if ($id) {
-            $taskRepo->delete($id);
-            echo json_encode(['success' => true]);
+            $deleted = $repo->delete($id);
+            if ($deleted) {
+                echo json_encode(['success' => true]);
+            } else {
+                http_response_code(400);
+                echo json_encode(['error' => 'Cannot delete position with assigned employees']);
+            }
         } else {
             http_response_code(400);
             echo json_encode(['error' => 'Valid ID is required']);

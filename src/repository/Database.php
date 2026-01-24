@@ -1,27 +1,38 @@
 <?php
 
+namespace App\Repository;
+
+use PDO;
+use PDOException;
+use RuntimeException;
+
 class Database {
     private static ?PDO $instance = null;
-    private static bool $connectionNeeded = false;
-
-    private const DB_HOST = 'db.mkalmo.eu';
-    private const DB_NAME = 'pavelkakinen';
-    private const DB_USER = 'pavelkakinen';
-    private const DB_PASS = 'e0c8bf71';
+    private static array $config = [];
 
     private function __construct() {}
 
-    public static function markConnectionNeeded(): void {
-        self::$connectionNeeded = true;
+    private static function loadConfig(): array {
+        if (empty(self::$config)) {
+            $configPath = __DIR__ . '/../../config.php';
+            if (!file_exists($configPath)) {
+                throw new RuntimeException('Config file not found. Copy config.example.php to config.php');
+            }
+            self::$config = require $configPath;
+        }
+        return self::$config;
     }
 
     public static function getConnection(): PDO {
         if (self::$instance === null) {
             try {
+                $config = self::loadConfig();
+                $db = $config['db'];
+
                 $dsn = sprintf(
                     "mysql:host=%s;dbname=%s;charset=utf8mb4",
-                    self::DB_HOST,
-                    self::DB_NAME
+                    $db['host'],
+                    $db['name']
                 );
 
                 $options = [
@@ -30,12 +41,16 @@ class Database {
                     PDO::ATTR_EMULATE_PREPARES => false,
                 ];
 
-                self::$instance = new PDO($dsn, self::DB_USER, self::DB_PASS, $options);
+                self::$instance = new PDO($dsn, $db['user'], $db['pass'], $options);
             } catch (PDOException $e) {
-                die("Database connection failed: " . $e->getMessage());
+                throw new RuntimeException('Database connection failed: ' . $e->getMessage(), 0, $e);
             }
         }
 
         return self::$instance;
+    }
+
+    public static function getConfig(): array {
+        return self::loadConfig();
     }
 }

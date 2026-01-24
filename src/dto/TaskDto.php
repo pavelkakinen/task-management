@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Dto;
+
 class TaskDto {
     public ?int $id;
     public string $description;
@@ -33,22 +35,5 @@ class TaskDto {
             $data['firstName'] ?? null,
             $data['lastName'] ?? null
         );
-    }
-
-    public function getEmployeeFullName(): ?string {
-        if ($this->employeeFirstName && $this->employeeLastName) {
-            return $this->employeeFirstName . ' ' . $this->employeeLastName;
-        }
-        return null;
-    }
-
-    public function getState(): string {
-        if ($this->isCompleted) {
-            return 'closed';
-        } elseif ($this->employeeId) {
-            return 'pending';
-        } else {
-            return 'open';
-        }
     }
 }

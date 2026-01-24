@@ -1,16 +1,25 @@
+-- Create positions table
+CREATE TABLE IF NOT EXISTS positions (
+     id INT AUTO_INCREMENT PRIMARY KEY,
+     title VARCHAR(100) NOT NULL,
+     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 -- Create employees table
 CREATE TABLE IF NOT EXISTS employees (
      id INT AUTO_INCREMENT PRIMARY KEY,
      firstName VARCHAR(21) NOT NULL,
      lastName VARCHAR(22) NOT NULL,
-     position VARCHAR(100) DEFAULT '',
-     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+     positionId INT NULL,
+     picture VARCHAR(255) NULL,
+     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+     FOREIGN KEY (positionId) REFERENCES positions(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Create tasks table
 CREATE TABLE IF NOT EXISTS tasks (
      id INT AUTO_INCREMENT PRIMARY KEY,
-     description VARCHAR(40) NOT NULL,
+     description VARCHAR(200) NOT NULL,
      employeeId INT NULL,
      isCompleted TINYINT(1) DEFAULT 0,
      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

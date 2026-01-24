@@ -1,24 +1,32 @@
 <?php
 
+namespace App\Dto;
+
 class EmployeeDto {
     public ?int $id;
     public string $firstName;
     public string $lastName;
-    public string $position;
+    public ?int $positionId;
+    public ?string $positionTitle;
     public int $taskCount;
+    public ?string $picture;
 
     public function __construct(
         ?int $id = null,
         string $firstName = '',
         string $lastName = '',
-        string $position = '',
-        int $taskCount = 0
+        ?int $positionId = null,
+        ?string $positionTitle = null,
+        int $taskCount = 0,
+        ?string $picture = null
     ) {
         $this->id = $id;
         $this->firstName = $firstName;
         $this->lastName = $lastName;
-        $this->position = $position;
+        $this->positionId = $positionId;
+        $this->positionTitle = $positionTitle;
         $this->taskCount = $taskCount;
+        $this->picture = $picture;
     }
 
     public static function fromArray(array $data): self {
@@ -26,12 +34,10 @@ class EmployeeDto {
             $data['id'] ?? null,
             $data['firstName'] ?? '',
             $data['lastName'] ?? '',
-            $data['position'] ?? '',
-            $data['taskCount'] ?? 0
+            $data['positionId'] ?? null,
+            $data['positionTitle'] ?? ($data['title'] ?? null),
+            $data['taskCount'] ?? 0,
+            $data['picture'] ?? null
         );
-    }
-
-    public function getFullName(): string {
-        return $this->firstName . ' ' . $this->lastName;
     }
 }
